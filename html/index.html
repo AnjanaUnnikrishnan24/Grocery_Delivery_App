@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GroFresh Basket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-200 font-sans">
+
+    
+    <!-- Navigation Bar -->
+    <nav  class=" fixed top-0 left-0 right-0">
+        <!-- Top Navigation Bar -->
+        <div class="bg-white py-3 px-6 flex flex-wrap justify-between items-center shadow-md">
+            <!-- Logo -->
+            <div class="text-2xl font-bold text-green-600">
+                <a href="#">GroFresh Basket</a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex items-center space-x-2 lg:w-auto mt-3 lg:mt-0">
+                <input type="text" placeholder="Search for products" class="border border-gray-300 rounded-md py-2 px-4 w-[600px] focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <button class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Search</button>
+            </div>
+
+            <!-- Links -->
+            <div class="flex items-center space-x-4 text-gray-800 lg:mt-0"> 
+                <div class="flex">
+                    <img src="/Images/zzOthers/user-svgrepo-com.svg" class="size-6 mr-2 ">
+                    <a href="signIn.html" class="hover:underline">Sign In</a>
+
+                </div>
+                <div class="flex">
+                    <img src="/Images/zzOthers/cart-shopping-svgrepo-com.svg" class="size-6 mr-2">
+                    <a href="cart.html" class="hover:underline">My Cart</a>
+                </div>
+                <div class="flex">
+                    <img src="/Images/zzOthers/user-svgrepo-com.svg" class="size-6 mr-2">
+                    <a href="userProfile.html" class="hover:underline">My Profile</a>
+                </div>
+                <div class="flex">
+                    <img src="/Images/zzOthers/user-svgrepo-com (1).svg" class="size-6 mr-2">
+                    <a href="adminLog.html">admin</a>
+                </div>
+                
+            </div>
+        </div>
+        <hr>
+
+        <!-- Bottom Navigation Bar -->
+         <div class="bg-white py-2 shadow flex justify-between space-x-10 text-slate-900 text-md font-medium">
+            <div class="flex">
+                <img src="/Images/zzOthers/bullet-list-svgrepo-com.svg" class="size-6 ml-8">
+                <a href="#" class="ml-4 hover:underline">All Categories</a>
+            </div>
+            <div class="flex justify-between gap-6 " >
+                <a href="index.html" class="hover:underline">Home</a> 
+                <a href="offers.html" class="hover:underline">Offers</a>
+                <a href="wishlist.html" class="hover:underline">Favorites</a>
+                <a href="aboutUs.html" class=" hover:underline">About Us</a>
+                <a href="#footer"  class="mr-8 hover:underline">Contact us</a>
+            </div>
+         </div>
+        <hr>
+    </nav>
+
+
+    <!-- Hero Section -->
+
+    <div class="mt-32">
+        <img src="/Images/gwBanner.png" class="w-full">
+    </div>
+    
+
+
+    <!-- Popular Categories Section -->
+    <div class="bg-gray-200 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-10">Popular Categories</h2>
+    
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/fruits.jpeg" alt="Fruits" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Fruits</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/flours.jpeg" alt="Flours" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Flours</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/pulses2.jpg" alt="Pulses and Cereals" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Pulses and Cereals</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/oils.jpeg" alt="Oils & Ghee" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Oils & Ghee</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/powders.jpeg" alt="Cooking Powders" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Cooking Powders</h4>
+                </div>
+    
+               
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/beverages.jpeg" alt="Beverages" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Beverages</h4>
+                </div>
+    
+            
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/snacks.jpeg" alt="Snacks & Biscuits" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Snacks & Biscuits</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/fruits.jpeg" alt="Vegetables" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Vegetables</h4>
+                </div>
+    
+               
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/fruits.jpeg" alt="Fruits" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Fruits</h4>
+                </div>
+    
+                
+                <div class="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition">
+                    <img src="/Images/zzOthers/organic.jpeg" alt="Organic Foods" class="w-24 h-24 object-cover rounded-md mb-4">
+                    <h4 class="text-lg font-semibold text-gray-700">Organic Foods</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trending Products Section -->
+    <div class="bg-gray-50 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Trending Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+
+                <div class="bg-white shadow-md rounded-md p-4 text-center">
+                    <img src="/Images/products/0724dbb1-3183-4244-a53e-2216d6393e31.jpeg" alt="Product" class="w-32 h-32 mx-auto">
+                    <h4 class="mt-4 text-lg font-medium text-gray-700">Product Name</h4>
+                    <p class="text-green-500 font-bold mt-2">Rs 100</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Add to Cart</button>
+                </div>
+                <div class="bg-white shadow-md rounded-md p-4 text-center">
+                    <img src="/Images/products/349c7c25-0345-401b-84d1-94ff713fba3b.jpeg" alt="Product" class="w-32 h-32 mx-auto">
+                    <h4 class="mt-4 text-lg font-medium text-gray-700">Product Name</h4>
+                    <p class="text-green-500 font-bold mt-2">Rs 100</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Add to Cart</button>
+                </div>
+                <div class="bg-white shadow-md rounded-md p-4 text-center">
+                    <img src="/Images/products/3a61d93b-69d8-4b38-8393-bb06e4faad36.jpeg" alt="Product" class="w-32 h-32 mx-auto">
+                    <h4 class="mt-4 text-lg font-medium text-gray-700">Product Name</h4>
+                    <p class="text-green-500 font-bold mt-2">Rs 100</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Add to Cart</button>
+                </div>
+                <div class="bg-white shadow-md rounded-md p-4 text-center">
+                    <img src="/Images/products/1ef5c59f-e8fa-4598-87fe-1330161838f1.jpeg" alt="Product" class="w-32 h-32 mx-auto">
+                    <h4 class="mt-4 text-lg font-medium text-gray-700">Product Name</h4>
+                    <p class="text-green-500 font-bold mt-2">Rs 100</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Add to Cart</button>
+                </div>
+                <div class="bg-white shadow-md rounded-md p-4 text-center">
+                    <img src="/Images/products/1ef5c59f-e8fa-4598-87fe-1330161838f1.jpeg" alt="Product" class="w-32 h-32 mx-auto">
+                    <h4 class="mt-4 text-lg font-medium text-gray-700">Product Name</h4>
+                    <p class="text-green-500 font-bold mt-2">Rs 100</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Add to Cart</button>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer id="footer" class="bg-green-700 text-gray-200 py-8">
+        <div class="flex justify-between max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+                <h3 class="text-lg font-semibold">Store Location</h3>
+                <p class="mt-2">GroFresh Basket<br>XYZ Lane<br>Market Road</p>
+                <p class="mt-4">Follow us on:</p>
+                
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold">Contact Us</h3>
+                <p class="mt-2">+959494949494</p>
+                <p>+944848484848</p>
+                <h3 class="mt-4 text-lg font-semibold">Email Us</h3>
+                <p class="mt-2">grofreshbasket.in</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold">Information</h3>
+                <ul class="mt-2 space-y-1">
+                    <li><a href="#" class="hover:underline">About Us</a></li>
+                    <li><a href="#" class="hover:underline">Contact Us</a></li>
+                    <li><a href="#" class="hover:underline">Deals & Offers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Subsribe to get updates</h3>
+                <input id="email-address" name="email" type="email" autocomplete="email" required class="min-w-0 flex-auto rounded-md bg-white px-4 py-2 text-white  sm:text-sm" placeholder="Enter your email">
+                <button type="submit" class=" rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 ">Subscribe</button>
+            </div>
+        </div>
+        <div class="mt-8 text-center">
+            <hr class="border-gray-600">
+            <p class="mt-4">&copy; Copyright 2025. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
