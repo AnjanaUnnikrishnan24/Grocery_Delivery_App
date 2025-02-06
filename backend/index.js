@@ -1,7 +1,8 @@
 import express,{json} from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { userAuth } from './Routes/userAuth.js';
-import adminAuth from './Routes/adminAuth.js';
+import {adminRoutes} from './Routes/adminRoutes.js';
 
 dotenv.config();
 
@@ -10,7 +11,14 @@ const app = express();
 app.use(json());
 
 app.use('/',userAuth);
-app.use('/',adminAuth);
+app.use('/',adminRoutes);
+
+mongoose.connect('mongodb://localhost:27017/GROCERY').then(()=>{
+    console.log("Mongodb connected Successfully to Grocery Website");})
+    .catch((error)=>{
+        console.error("Mongodb connection failed",error);
+})
+
 
 app.listen(process.env.PORT,function(){
     console.log(`server is listening at ${process.env.PORT}`);
