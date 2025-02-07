@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import { model } from "mongoose";
 
 const signup = new Schema({
-    user:{type:String,require:true},
+    userRole:{type:String,require:true},
     name:{type:String,require:true},
     phone:{type:String,require:true,unique:true},
     email:{type:String,require:true,unique:true},

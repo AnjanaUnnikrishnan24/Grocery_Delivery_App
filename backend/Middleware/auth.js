@@ -17,7 +17,10 @@ const authenticate=(req,res,next)=>{
             console.log(verified);
             req.user = verified.Email;
             req.role = verified.UserRole;
+            console.log(req.user);
+            console.log(req.role);
             next();
+        
         }
         else{
             res.status(401).send("Unauthorized access");
