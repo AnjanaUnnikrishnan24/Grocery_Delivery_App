@@ -87,21 +87,5 @@ userRoutes.get('/orderHistory',authenticate,userCheck, async(req,res)=>{
     }
 });
 
-userRoutes.get('/whishlist',authenticate,userCheck, async(req,res)=>{
-    try {
-        const user = await userSchema.findById(req.user.id);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        const products = await prodSchema.find({ '_id': { $in: user.wishlist } });
-
-        res.status(200).json(products);
-
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
 
 export {userRoutes}
