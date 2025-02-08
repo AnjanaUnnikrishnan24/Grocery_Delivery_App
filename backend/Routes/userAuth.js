@@ -27,8 +27,9 @@ userAuth.post('/signUp',async(req,res)=>{
             });
             await newuser.save();
             res.status(201).send("Signed-up successfully")
-        }}
-    catch{
+        }
+    }catch(error){
+        console.log(error)
         res.status(500).send("Internal Server error");
     }  
 })

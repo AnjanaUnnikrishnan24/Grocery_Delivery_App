@@ -37,7 +37,6 @@ adminRoutes.post('/addProducts', authenticate, adminCheck, async (req,res)=>{
     }
 });
 
-
 adminRoutes.put('/updateProduct', authenticate,adminCheck, async (req, res) => {
     try {
         const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity,StockStatus } = req.body;

@@ -3,89 +3,73 @@ import authenticate from "../Middleware/auth.js";
 import userCheck from "../Middleware/userCheck.js";
 import { prodSchema} from "../Models/prodSchema.js";
 import { UserSchema } from "../Models/userSchema.js";
+import { checkoutSchema } from "../Models/checkoutSchema.js";
 
 const userRoutes = Router();
 
-userRoutes.post('/addAddress',authenticate,userCheck, async(req,res)=>{
+userRoutes.get('/allproducts', async (req, res) => {
     try {
-        const { street, city, state, zip } = req.body;
-        const user = await UserSchema.findById(req.user.id);
-
-        user.addresses.push({ street, city, state, zip });
-        await user.save();
-
-        res.status(201).json({ message: "Address added successfully" });
-
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-userRoutes.post('/placeOrder',authenticate,userCheck, async(req,res)=>{
-    try {
-        const user = await UserSchema.findById(req.user.id);
-        if (user.cart.length === 0) return res.status(400).json({ message: "Cart is empty" });
-
-        const newOrder = new Order({
-            orderId: `ORD-${Date.now()}`,
-            customerId: user._id,
-            customerName: user.name,
-            customerEmail: user.email,
-            items: user.cart,
-            totalAmount: user.cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
-            deliveryDate: new Date(Date.now())
-        });
-
-        await newOrder.save();
-        user.cart = [];
-        await user.save();
-
-        res.status(201).json({ message: "Order placed successfully" });
-
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-userRoutes.get('/viewCart',authenticate,userCheck, async(req,res)=>{
-    try {
-        const user = await UserSchema.findById(req.user.id);
-        res.status(200).json(user.cart);
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-userRoutes.get('/catalog', authenticate, async (req, res) => {
-    try {
-        const products = await prodSchema.find({}, 'name weight price');
-
-        if (products.length === 0) {
-            return res.status(404).json({ message: "No products available" });
-        }
-
+        const products = await prodSchema.find();
         res.status(200).json(products);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-userRoutes.get('/orderHistory',authenticate,userCheck, async(req,res)=>{
+userRoutes.get('/getProducts', async (req, res) => {
     try {
-        const orders = await orderSchema.find({ customerId: req.user.id }).populate('customerId', 'name email');
+        const { ProductId } = req.body;
+        const product = await prodSchema.findOne({ productId:ProductId });
 
-        if (orders.length === 0) {
-            return res.status(404).json({ message: "No orders found" });
+        if (product) {
+            res.status(200).json(product);
+        } else {
+            res.status(404).json({ message: "Product not found" });
         }
-
-        res.status(200).json(orders);
-
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
+userRoutes.post('/addProdCart',authenticate,userCheck,async(req,res)=>{
+    const { id, quantity } = req.body; // Assuming the quantity is passed in params
+
+    try {
+        // Find the product by productId
+        const product = await prodSchema.findOne({ productId: id });
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // Find the user based on the logged-in email
+        const user = await UserSchema.findOne({ email: req.userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the product already exists in the user's cart
+        const existingProduct = user.cart.find(item => item.productId == id);
+        if (existingProduct) {
+            // Update quantity if product already exists in the cart
+            existingProduct.quantity = Number(existingProduct.quantity) + Number(quantity);
+            product.quantity = Number(product.quantity) - Number(quantity); // Update product quantity
+        } else {
+            // Add product to cart if not already present
+            user.cart.push({ productId: id, quantity: quantity });
+            product.quantity = Number(product.quantity) - Number(quantity); // Update product quantity
+        }
+
+        // Save updated user data and product data
+        await user.save();
+        await product.save();
+
+        res.json({ message: 'Product added to cart', cart: user.cart });
+    } catch (error) {
+        console.error('Error adding product to cart:', error);
+        res.status(500).json({ error: 'Failed to add product to cart' });
+    }
+})
 
 export {userRoutes}
