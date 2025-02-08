@@ -2,7 +2,7 @@ import express,{json} from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { userAuth } from './Routes/userAuth.js';
-import {adminRoutes} from './Routes/adminRoutes.js';
+import { adminRoutes } from './Routes/adminRoutes.js';
 import { userRoutes } from './Routes/userRoutes.js';
 
 dotenv.config();
