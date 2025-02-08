@@ -8,25 +8,25 @@ const adminRoutes = Router();
 
 adminRoutes.post('/addProducts', authenticate, adminCheck, async (req,res)=>{
     try {
-        const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity } = req.body
+        const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity,StockStatus } = req.body
         console.log(ProductName);
-        const oldProduct = await prodSchema.findOne({pid:ProductId})
+        const oldProduct = await prodSchema.findOne({productId:ProductId})
         if(oldProduct){
             res.status(401).send("Product Already exist");
         }else{
             //const imagePath= req.file ? req.file.path:"";
             const newProduct = new prodSchema({
                 name:ProductName,
-                pid:ProductId,
+                productId:ProductId,
                 //Image:imagePath,
                 category:prodCategory,
                 brand:prodBrand,
                 type:prodType,
                 price:prodPrice,
                 weight:prodWeight,
-                quantity:pQuantity
+                quantity:pQuantity,
+                stockStatus:StockStatus
             });
-
             await newProduct.save();
             res.status(200).send("Product added successfully")
         }
@@ -37,23 +37,24 @@ adminRoutes.post('/addProducts', authenticate, adminCheck, async (req,res)=>{
     }
 });
 
+
 adminRoutes.put('/updateProduct', authenticate,adminCheck, async (req, res) => {
     try {
-        const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity } = req.body;
-        const result = await sample.findOne({pid:ProductId});
+        const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity,StockStatus } = req.body;
+        const result = await prodSchema.findOne({ productId:ProductId });
         console.log(result);
         
         if(result){
             result.name=ProductName,
-            result.pid=ProductId,
+            result.productId=ProductId,
             //Image:imagePath,
             result.category=prodCategory,
             result.brand=prodBrand,
             result.type=prodType,
             result.price=prodPrice,
             result.weight=prodWeight,
-            result.quantity=pQuantity
-            
+            result.quantity=pQuantity,
+            result.stockStatus=StockStatus
 
             await result.save();
             res.status(201).send("Product updated successfully")
@@ -68,10 +69,10 @@ adminRoutes.put('/updateProduct', authenticate,adminCheck, async (req, res) => {
 adminRoutes.delete('/deleteProduct',authenticate,adminCheck, async (req,res)=>{
     try{
         const {ProductId} = req.body;
-        const result = await sample.findOne({pid:ProductId});
+        const result = await prodSchema.findOne({ productId:ProductId });
         console.log(result);
         if(result){
-            await sample.findOneAndDelete({pid:ProductId});
+            await prodSchema.findOneAndDelete({ productId:ProductId });
             res.status(200).json({msg:"Product deleted successfully"});
         }else{
             res.status(404).json({msg:"Product not found"});
@@ -79,7 +80,8 @@ adminRoutes.delete('/deleteProduct',authenticate,adminCheck, async (req,res)=>{
     } catch{
         res.status(500).json({msg:"Internal Server Error"})
     }
-})
+});
+
 
 adminRoutes.get('/inventory',authenticate,adminCheck, async (req,res)=>{
     try {
@@ -91,32 +93,25 @@ adminRoutes.get('/inventory',authenticate,adminCheck, async (req,res)=>{
     }
 });
 
-adminRoutes.get('/orders', authenticate, adminCheck, async (req, res) => {
-    try {
-        const orders = await orderSchema.find();  
-        res.status(200).json(orders);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-
 adminRoutes.get('/searchProduct', authenticate, adminCheck, async (req, res) => {
     try {
-        const { query } = req.query;
+        const { searchValue } = req.body;
 
-        if (!query) {
-            return res.status(400).json({ message: "Search query is required" });
+        if (!searchValue) {
+            return res.status(400).json({ message: "Search value is required" });
         }
 
         const products = await prodSchema.find({
             $or: [
-                { name: { $regex: query, $options: "i" } },
-                { category: { $regex: query, $options: "i" } },
-                { brand: { $regex: query, $options: "i" } }
+                { name: { $regex: searchValue, $options: "i" } },
+                { category: { $regex: searchValue, $options: "i" } },
+                { brand: { $regex: searchValue, $options: "i" } }
             ]
         });
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: "No products found matching your search" });
+        }
 
         res.status(200).json(products);
     } catch (error) {
@@ -125,4 +120,16 @@ adminRoutes.get('/searchProduct', authenticate, adminCheck, async (req, res) => 
     }
 });
 
+// adminRoutes.get('/orders', authenticate, adminCheck, async (req, res) => {
+//     try {
+//         const orders = await orderSchema.find();  
+//         res.status(200).json(orders);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// });
+
+
 export { adminRoutes }
+

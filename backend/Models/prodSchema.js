@@ -4,7 +4,7 @@ import { Schema, model } from "mongoose";
 const pDetails = new Schema({
     name: { type: String, required: true },
     productId: { type: String, required: true, unique: true },
-    Image: { type: String, required: true },
+    //Image: { type: String, required: true },
     category: { type: String, required: true },
     brand: { type: String, required: true },
     type: { type: String, required: true },
