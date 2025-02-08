@@ -1,15 +1,15 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import userCheck from "../Middleware/userCheck.js";
-import { prodSchema, orderSchema } from "../Models/prodSchema.js";
-import { userSchema } from "../Models/userSchema";
+import { prodSchema} from "../Models/prodSchema.js";
+import { UserSchema } from "../Models/userSchema.js";
 
 const userRoutes = Router();
 
 userRoutes.post('/addAddress',authenticate,userCheck, async(req,res)=>{
     try {
         const { street, city, state, zip } = req.body;
-        const user = await userSchema.findById(req.user.id);
+        const user = await UserSchema.findById(req.user.id);
 
         user.addresses.push({ street, city, state, zip });
         await user.save();
@@ -23,7 +23,7 @@ userRoutes.post('/addAddress',authenticate,userCheck, async(req,res)=>{
 
 userRoutes.post('/placeOrder',authenticate,userCheck, async(req,res)=>{
     try {
-        const user = await userSchema.findById(req.user.id);
+        const user = await UserSchema.findById(req.user.id);
         if (user.cart.length === 0) return res.status(400).json({ message: "Cart is empty" });
 
         const newOrder = new Order({
@@ -49,7 +49,7 @@ userRoutes.post('/placeOrder',authenticate,userCheck, async(req,res)=>{
 
 userRoutes.get('/viewCart',authenticate,userCheck, async(req,res)=>{
     try {
-        const user = await userSchema.findById(req.user.id);
+        const user = await UserSchema.findById(req.user.id);
         res.status(200).json(user.cart);
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error" });

@@ -2,8 +2,7 @@ import { Router } from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import {userSchema} from "../Models/userSchema.js"
- 
+import { UserSchema } from "../Models/userSchema.js";
 dotenv.config();
 
 const userAuth = Router();
@@ -14,12 +13,12 @@ userAuth.post('/signUp',async(req,res)=>{
         console.log(Name);
         const newPassword = await bcrypt.hash(Password,10);
         console.log(newPassword);
-        const existinguser = await userSchema.findOne({email:Email})
+        const existinguser = await UserSchema.findOne({email:Email})
         if(existinguser){
             res.status(401).send("User already exit");
         }
         else{
-            const newuser = new userSchema({
+            const newuser = new UserSchema({
                 userRole:UserRole,
                 name:Name,
                 phone:PhoneNo,
@@ -37,7 +36,7 @@ userAuth.post('/signUp',async(req,res)=>{
 userAuth.post('/login',async(req,res)=>{
     try{
         const {Email,Password}=req.body;
-        const result = await userSchema.findOne({email:Email});
+        const result = await UserSchema.findOne({email:Email});
         if(!result){
             res.status(400).send("Enter a valid user email");
         }
@@ -69,7 +68,6 @@ userAuth.get('/logout',(req,res)=>{
     res.clearCookie('authToken');
     console.log("User logged out successfully");
     res.status(200).json({msg:"Successfully logged out"});
-
 })
 
 export {userAuth};
