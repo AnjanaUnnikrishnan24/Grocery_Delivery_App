@@ -85,6 +85,8 @@ adminRoutes.delete('/deleteProduct',authenticate,adminCheck, async (req,res)=>{
 adminRoutes.get('/inventory',authenticate,adminCheck, async (req,res)=>{
     try {
         const allProducts = await prodSchema.find();
+        console.log(allProducts);
+        
         res.status(200).json(allProducts);
     } catch (error) {
         console.error(error);

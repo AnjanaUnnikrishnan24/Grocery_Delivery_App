@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 // Product Schema
 const pDetails = new Schema({
     name: { type: String, required: true },
-    productId: { type: Schema.Types.ObjectId, required: true, unique: true },
+    productId: { type: String, required: true, unique: true },
     //Image: { type: String, required: true },
     category: { type: String, required: true },
     brand: { type: String, required: true },
