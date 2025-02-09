@@ -6,10 +6,6 @@ const userDetail = new Schema({
     phone: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true }, 
-    cart:[{
-        productId: { type: Number, required: true },
-        quantity: { type: Number, required: true }
-    }]   
 });
 
 const UserSchema = model('User', userDetail);
