@@ -1,11 +1,9 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import userCheck from "../Middleware/userCheck.js";
-import adminCheck from "../Middleware/adminCheck.js";
 import { prodSchema} from "../Models/prodSchema.js";
 import { checkoutSchema } from "../Models/checkoutSchema.js";
 import { cartSchema } from "../Models/cart.js";
-import { orderSchema } from "../Models/orderschema.js";
 import { UserSchema } from "../Models/userSchema.js";
 
 
@@ -40,7 +38,7 @@ userRoutes.get('/getProducts', async (req, res) => {
 userRoutes.post('/addProdCart',authenticate,userCheck,async(req,res)=>{  
     try {
         const { productId, quantity } = req.body;
-        //productId = Number(req.body.productId);
+
         const product = await prodSchema.findOne({ productId });
 
         if (!product) {
@@ -76,7 +74,7 @@ userRoutes.post('/addProdCart',authenticate,userCheck,async(req,res)=>{
 
 userRoutes.post('/viewCart',authenticate,userCheck,async(req,res)=>{
     try {
-        // const cartItems = await cartSchema.find({ userId: req.user }).populate("productId");
+        
         const cartItems = await cartSchema.find();
 
         if (cartItems.length === 0) {
@@ -119,51 +117,5 @@ userRoutes.post('/checkout',authenticate,userCheck,async(req,res)=>{
         res.status(500).json({ message: "Internal Server Error" });
     }
 })
-
-userRoutes.get('/viewOrder', authenticate, adminCheck, async (req, res) => {
-    try {
-        const orderId  = req.query.userId; 
-        console.log(orderId);
-        
-        
-
-        if (!orderId) {
-            return res.status(400).json({ message: "Order ID is required" });
-        }
-
-        const order = await orderSchema.findOne(req.body.userId)
-            .populate("userId")  
-            .populate("checkoutDetails")  
-            .populate("products");  
-
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        res.status(200).json(order);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-
-userRoutes.get('/viewAllOrder', authenticate, adminCheck, async (req, res) => {
-    try {
-        const orders = await orderSchema.find()
-            .populate("userId")  
-            .populate("checkoutDetails")  
-            .populate("products");  
-
-        if (orders.length === 0) {
-            return res.status(404).json({ message: "No orders found" });
-        }
-
-        res.status(200).json(orders);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
 
 export {userRoutes}
