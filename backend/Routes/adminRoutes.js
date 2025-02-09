@@ -119,16 +119,5 @@ adminRoutes.get('/searchProduct', authenticate, adminCheck, async (req, res) => 
     }
 });
 
-// adminRoutes.get('/orders', authenticate, adminCheck, async (req, res) => {
-//     try {
-//         const orders = await orderSchema.find();  
-//         res.status(200).json(orders);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-
-
 export { adminRoutes }
 

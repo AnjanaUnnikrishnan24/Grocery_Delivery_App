@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const userDetail = new Schema({
-    userRole: { type: String, required: true },
+    userRole: { type: String, enum: ["admin", "user"], required: true },
     name: { type: String, required: true },
     phone: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
