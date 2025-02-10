@@ -11,7 +11,7 @@ const convertToBase64 = (buffer) => {
     return buffer.toString("base64");
 };
 
-adminRoutes.post('/addProducts', authenticate, adminCheck,upload.single("courseImage"), async (req,res)=>{
+adminRoutes.post('/addProducts', authenticate, adminCheck,upload.single("pImage"), async (req,res)=>{
     try {
         const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity,StockStatus } = req.body
         console.log(ProductName);

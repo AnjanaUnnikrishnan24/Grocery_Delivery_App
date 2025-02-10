@@ -27,17 +27,17 @@ userRoutes.get('/getProducts', async (req, res) => {
         const product = await prodSchema.findOne({ productId:ProductId });
 
         if (product) {
-            const imageBuffer = Buffer.from(result.image, "base64");
+        //     const imageBuffer = Buffer.from(result.image, "base64");
 
-            const compressedImage = await sharp(imageBuffer)
-            .resize({ width: 300 }) 
-            .jpeg({ quality: 70 }) 
-            .toBuffer();
+        //     const compressedImage = await sharp(imageBuffer)
+        //     .resize({ width: 300 }) 
+        //     .jpeg({ quality: 70 }) 
+        //     .toBuffer();
            
-           res.set({
-            "Content-Type": "image/png",
-            "Content-Disposition": 'attachment; filename="courseImage.png"'});
-            res.send(compressedImage);
+        //    res.set({
+        //     "Content-Type": "image/png",
+        //     "Content-Disposition": 'attachment; filename="pImage.png"'});
+        //     res.send(compressedImage);
             
             res.status(200).json(product);
         } else {
