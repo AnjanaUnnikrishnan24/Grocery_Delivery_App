@@ -5,6 +5,8 @@ import { prodSchema} from "../Models/prodSchema.js";
 import { checkoutSchema } from "../Models/checkoutSchema.js";
 import { cartSchema } from "../Models/cart.js";
 import { UserSchema } from "../Models/userSchema.js";
+import upload from "../Middleware/upload.js";
+import sharp from "sharp"
 
 
 const userRoutes = Router();
@@ -25,6 +27,18 @@ userRoutes.get('/getProducts', async (req, res) => {
         const product = await prodSchema.findOne({ productId:ProductId });
 
         if (product) {
+            const imageBuffer = Buffer.from(result.image, "base64");
+
+            const compressedImage = await sharp(imageBuffer)
+            .resize({ width: 300 }) 
+            .jpeg({ quality: 70 }) 
+            .toBuffer();
+           
+           res.set({
+            "Content-Type": "image/png",
+            "Content-Disposition": 'attachment; filename="courseImage.png"'});
+            res.send(compressedImage);
+            
             res.status(200).json(product);
         } else {
             res.status(404).json({ message: "Product not found" });

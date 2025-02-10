@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { UserSchema } from "../Models/userSchema.js";
 dotenv.config();
 
+
 const userAuth = Router();
  
 userAuth.post('/signUp',async(req,res)=>{

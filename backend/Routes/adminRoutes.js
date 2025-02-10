@@ -2,11 +2,16 @@ import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import adminCheck from "../Middleware/adminCheck.js";
 import { prodSchema} from "../Models/prodSchema.js";
-//import upload from "../Middleware/upload.js";
+import upload from "../Middleware/upload.js";
+import sharp from "sharp"
 
 const adminRoutes = Router();
 
-adminRoutes.post('/addProducts', authenticate, adminCheck, async (req,res)=>{
+const convertToBase64 = (buffer) => {
+    return buffer.toString("base64");
+};
+
+adminRoutes.post('/addProducts', authenticate, adminCheck,upload.single("courseImage"), async (req,res)=>{
     try {
         const { ProductName,ProductId,prodCategory,prodBrand,prodType,prodPrice,prodWeight,pQuantity,StockStatus } = req.body
         console.log(ProductName);
@@ -14,11 +19,15 @@ adminRoutes.post('/addProducts', authenticate, adminCheck, async (req,res)=>{
         if(oldProduct){
             res.status(401).send("Product Already exist");
         }else{
-            //const imagePath= req.file ? req.file.path:"";
+            let imageBase64 = null;
+            if (req.file) {
+                imageBase64 = convertToBase64(req.file.buffer);
+            }
+            
             const newProduct = new prodSchema({
                 name:ProductName,
                 productId:ProductId,
-                //Image:imagePath,
+                Image:imageBase64,
                 category:prodCategory,
                 brand:prodBrand,
                 type:prodType,
