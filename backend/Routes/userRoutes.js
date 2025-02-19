@@ -58,6 +58,7 @@ userRoutes.post('/addProdCart',authenticate,userCheck,async(req,res)=>{
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
+        
         const userId =await UserSchema.findOne({_id:req.body.User_id});
         console.log(userId._id);
         

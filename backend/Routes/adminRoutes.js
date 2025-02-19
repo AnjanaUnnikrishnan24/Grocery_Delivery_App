@@ -1,9 +1,8 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import adminCheck from "../Middleware/adminCheck.js";
-import { prodSchema} from "../Models/prodSchema.js";
+import { prodSchema } from "../Models/prodSchema.js";
 import upload from "../Middleware/upload.js";
-import sharp from "sharp"
 
 const adminRoutes = Router();
 
