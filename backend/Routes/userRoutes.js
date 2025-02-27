@@ -5,8 +5,6 @@ import { prodSchema} from "../Models/prodSchema.js";
 import { checkoutSchema } from "../Models/checkoutSchema.js";
 import { cartSchema } from "../Models/cart.js";
 import { UserSchema } from "../Models/userSchema.js";
-import upload from "../Middleware/upload.js";
-import sharp from "sharp"
 
 
 const userRoutes = Router();
