@@ -2,7 +2,7 @@ import { Router } from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UserSchema } from "../Models/userSchema.js";
+import { UserSchema } from "../../userSchema.js";
 dotenv.config();
 
 

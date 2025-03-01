@@ -1,10 +1,10 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import userCheck from "../Middleware/userCheck.js";
-import { prodSchema} from "../Models/prodSchema.js";
-import { checkoutSchema } from "../Models/checkoutSchema.js";
-import { cartSchema } from "../Models/cart.js";
-import { UserSchema } from "../Models/userSchema.js";
+import { prodSchema} from "../../prodSchema.js";
+import { checkoutSchema } from "../../checkoutSchema.js";
+import { cartSchema } from "../../cart.js";
+import { UserSchema } from "../../userSchema.js";
 
 
 const userRoutes = Router();
