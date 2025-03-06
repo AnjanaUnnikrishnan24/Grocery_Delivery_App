@@ -3,8 +3,8 @@ import { Schema, model } from 'mongoose';
 // Category Schema
 
 const categorySchema = new Schema({
-    name: { type: String, required: true },
-    image: { type: String }
+    catName: { type: String, required: true },
+    CatImage: { type: String }
 }, { timestamps: true });
 
 const Category = model("Category", categorySchema);
@@ -12,8 +12,8 @@ const Category = model("Category", categorySchema);
 // Sub Category Schema
 
 const subCategorySchema = new Schema({
-    name: { type: String, required: true },
-    image: { type: String },
+    subname: { type: String, required: true },
+    subimage: { type: String },
     categoryId: [{ type: Schema.Types.ObjectId, ref: "Category" }]
 }, { timestamps: true });
 

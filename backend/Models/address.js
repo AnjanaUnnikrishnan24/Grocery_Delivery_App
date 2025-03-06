@@ -1,6 +1,6 @@
 import { Schema,model} from 'mongoose';
 
-const addressDetails = new Schema({
+const addressSchema = new Schema({
     address_line: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
@@ -9,7 +9,7 @@ const addressDetails = new Schema({
     mobile: { type: String, required: true }
 },{timestamps:true});
 
-const addressSchema = model('Address',addressDetails);
+const address = model('Address',addressSchema);
 
-export { addressSchema };
+export { address };
 

@@ -1,16 +1,11 @@
-import React from 'react'
+import React from "react";
 
 const Footer = () => {
   return (
-    <>
-    <footer id="footer" className="w-full bg-green-700 text-gray-200 py-8 mt-auto">
-      <div className="mt-8 text-center">
-        <hr className="border-gray-600" />
-        <p className="mt-4">&copy; Copyright 2025. GroFresh Basket.</p>
-      </div>
+    <footer className="fixed bottom-0 left-0 w-full bg-green-700 text-gray-200 py-3 text-center">
+      <p>&copy; 2025 GroFresh Basket SuperMarket. All rights reserved.</p>
     </footer>
-    </>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

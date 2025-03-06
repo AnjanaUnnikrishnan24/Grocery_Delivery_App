@@ -1,14 +1,61 @@
-import React from 'react'
+import React,{useState} from 'react'
+import { useNavigate,Link } from 'react-router-dom'
 
 const SignUp = () => {
+    const [fullName,setFullName] = useState('');
+    const [phonenumber,setPhonenumber] = useState('');
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+    const [userRole,setUserRole]= useState('user');
+    const [error,setError] = useState('');
+    const navigate = useNavigate();
+    
+    const handleSignup = async (e) =>{
+        e.preventDefault();
+        try{
+            const response = await fetch('/api/signup',{
+                method:'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type':'application/json',
+                },
+                body: JSON.stringify({
+                    FullName : fullName,
+                    PhoneNo:phonenumber,
+                    Email:email,
+                    Password:password,
+                    UserRole:userRole,                   
+                }),
+            });
+
+            if(!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.msg || 'Signup failed');
+            }
+
+            navigate('/');
+        } catch(err) {
+            setError(err.message || 'Signup failed: Please try again!')
+        }
+    };
+    
   return (
     <>
     <div className="bg-gray-200 flex items-center justify-center min-h-screen">
-    <form className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+    <form onSubmit={handleSignup} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-2 text-gray-800 text-center">Create an account</h2>
 
-        <label for="userRole" className="block text-sm font-medium text-gray-700 mb-1">User Type</label>
-        <select name="usertype" id="userRole" class="block border border-gray-300 text-sm font-medium w-full p-2 rounded-lg mb-2">
+        <label 
+            for="userRole" 
+            className="block text-sm font-medium text-gray-700 mb-1"
+        >User Type
+        </label>
+        <select 
+            name="usertype" 
+            id="userRole" 
+            value={userRole}
+            onChange={(e)=>setUserRole(e.target.value)}
+            class="block border border-gray-300 text-sm font-medium w-full p-2 rounded-lg mb-2">
             <option value="user">User</option>
             <option value="admin">Admin</option>
         </select>
@@ -16,11 +63,12 @@ const SignUp = () => {
         <label 
             className="block text-sm font-medium text-gray-700 mb-1"
         >
-            Name
+           Full Name
         </label>
         <input 
             type="text" 
-            id="name" 
+            value = {fullName}
+            onChange={(e)=>setFullName(e.target.value)}
             placeholder="Full Name" 
             className="w-full p-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-blue-500"
         />
@@ -32,7 +80,8 @@ const SignUp = () => {
         </label>
         <input 
             type="number" 
-            id="phone" 
+            value={phonenumber}
+            onChange={(e)=>setPhonenumber(e.target.value)}
             placeholder="Phone Number" 
             className="w-full p-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-blue-500"
         />
@@ -44,17 +93,31 @@ const SignUp = () => {
         </label>
         <input 
             type="email" 
-            id="email" 
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
             placeholder="Email Address" 
             className="w-full p-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-blue-500"
         />
 
         <label for="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-        <input type="password" id="password" placeholder="Password" className="w-full p-2 border border-gray-300 rounded-lg mb-6 focus:ring-2 focus:ring-blue-500"/>
+        <input 
+            type="password"  
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+            placeholder="Enter the Password" 
+            className="w-full p-2 border border-gray-300 rounded-lg mb-6 focus:ring-2 focus:ring-blue-500"
+        />
 
-        <a href="prodCatalog.html" className="inline-block mt-0 bg-green-500 text-white px-6 py-2 rounded-md text-lg font-medium hover:bg-blue-600">Sign Up</a>
-
-        <p className="text-center text-sm text-gray-600 mt-4">Already have an account? <a href="signIn.html" className="text-blue-500 hover:underline">Sign In</a></p>
+        <button
+            type="submit"
+            className="w-full bg-green-500 text-white px-6 py-2 rounded-md text-lg font-medium hover:bg-green-600"
+        >
+            Sign Up
+        </button>
+        <p className="text-center text-sm text-gray-600 mt-4"
+            >Already have an account? 
+            <Link to='/' className="text-blue-500 hover:underline">Sign In</Link>
+        </p>
     </form>
     </div>
     </>

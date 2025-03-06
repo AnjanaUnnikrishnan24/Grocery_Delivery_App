@@ -1,30 +1,48 @@
-import React from 'react'
+import React from 'react';
+import UserNavBar from '../components/UserNavBar'
 
 const About = () => {
   return (
-    <>
-    <div className="bg-gray-200 font-sans">
-        <div class="h-[670px] bg-white mt-32 ml-32 mr-10 p-6 ">
-            <h1 class="text-3xl text-center">About Us</h1>
-            <p class="text-xl">Welcome to our Grocery Delivery Website, a platform crafted to transform the way you shop for groceries. At the heart of our 
-            service lies the goal of delivering convenience, quality, and variety right to your doorstep.</p>
-            <p class="text-xl">We understand that your time is valuable, and grocery shopping should be an effortless and enjoyable experience. 
-            With this in mind, we've designed a user-friendly website that allows you to browse, select, and purchase groceries 
-            from the comfort of your home. From fresh produce to pantry staples, we've got everything you need to keep your kitchen 
-            stocked and your meals delicious.</p>
-            <h2 class="text-2xl mt-10">What We Offer</h2>
-            <p class="text-xl">Our platform brings together the best of technology and community, ensuring a seamless experience for all our users:</p>
-            <p class="mt-2 text-xl "><strong>Smart Shopping:</strong> Receive personalized recommendations based on your past purchases, dietary preferences, and seasonal trends.<br/>
-            <strong>Real-Time Inventory Updates:</strong> Stay informed about product availability and exciting offers as you shop.<br/>
-            <strong>Ultra-Fast Delivery:</strong> Essential items like milk, bread, or baby supplies can be delivered in record time.<br/></p>
-            <h2 class="text-2xl mt-10">Our Vision</h2>
-            <p class="text-xl">We aim to redefine grocery shopping by offering a comprehensive platform that caters to the needs of all stakeholders.
-            Thank you for choosing us to be a part of your daily life. Let's make grocery shopping a delightful experience together!</p>
-        </div>
-    </div>
-    
-    </>
-  )
-}
+    <>  
+    <UserNavBar/>
+    <div className="bg-gray-100 font-sans flex items-center justify-center  px-4">
+      <div className="max-w-5xl bg-white shadow-lg rounded-lg p-10 md:p-14">
+        <h1 className="text-4xl font-bold text-center text-green-700 mt=32 mb-6">About Us</h1>
+        <p className="text-lg text-gray-700 leading-relaxed text-center">
+          Welcome to <strong>GroFresh Basket</strong>, your go-to platform for effortless grocery shopping.  
+          Our mission is to bring convenience, quality, and a wide variety of products straight to your doorstep.
+        </p>
 
-export default About
+        <h2 className="text-3xl font-semibold text-green-600 mt-10">What We Offer</h2>
+        <p className="text-lg text-gray-700 mt-4">
+          We merge **technology and community** to enhance your shopping experience:
+        </p>
+
+        <ul className="mt-4 text-lg text-gray-700 space-y-3">
+          <li>
+            <span className="font-semibold text-green-600">🛒 Smart Shopping:</span> Get personalized recommendations based on your past purchases, dietary preferences, and seasonal trends.
+          </li>
+          <li>
+            <span className="font-semibold text-green-600">📊 Real-Time Inventory Updates:</span> Stay informed about product availability and the latest offers.
+          </li>
+          <li>
+            <span className="font-semibold text-green-600">🚀 Ultra-Fast Delivery:</span> Essential items like milk, bread, and baby supplies delivered in record time.
+          </li>
+        </ul>
+
+        <h2 className="text-3xl font-semibold text-green-600 mt-10">Our Vision</h2>
+        <p className="text-lg text-gray-700 mt-4">
+          We aim to **redefine grocery shopping** by offering a comprehensive, user-friendly platform that caters to all stakeholders.
+        </p>
+        <p className="text-lg text-gray-700 mt-4 text-center font-medium">
+          Thank you for choosing **GroFresh Basket** – let's make grocery shopping a delightful experience together! 🛍️
+        </p>
+      </div>
+    </div>
+    </>
+  );
+};
+
+export default About;
+
+
