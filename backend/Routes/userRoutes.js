@@ -1,10 +1,7 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import userCheck from "../Middleware/userCheck.js";
-import { prodSchema} from "../../prodSchema.js";
-import { checkoutSchema } from "../../checkoutSchema.js";
-import { cartSchema } from "../../cart.js";
-import { UserSchema } from "../../userSchema.js";
+
 
 
 const userRoutes = Router();
@@ -24,19 +21,7 @@ userRoutes.get('/getProducts', async (req, res) => {
         const { ProductId } = req.body;
         const product = await prodSchema.findOne({ productId:ProductId });
 
-        if (product) {
-        //     const imageBuffer = Buffer.from(result.image, "base64");
-
-        //     const compressedImage = await sharp(imageBuffer)
-        //     .resize({ width: 300 }) 
-        //     .jpeg({ quality: 70 }) 
-        //     .toBuffer();
-           
-        //    res.set({
-        //     "Content-Type": "image/png",
-        //     "Content-Disposition": 'attachment; filename="pImage.png"'});
-        //     res.send(compressedImage);
-            
+        if (product) {     
             res.status(200).json(product);
         } else {
             res.status(404).json({ message: "Product not found" });

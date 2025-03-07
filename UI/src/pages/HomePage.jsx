@@ -1,19 +1,51 @@
-import React from "react";
-import { banner } from "../assets";
+import React, { useEffect, useState } from "react";
 import UserNavBar from "../components/UserNavBar";
-import Footer from "../components/Footer";
 import CategoryGrid from "../components/CategoryGrid";
 import ProductGrid from "../components/ProductGrid";
-
+import Footer from "../components/Footer";
+import Banner1 from "../assets/images/Banner1.png";
 
 const HomePage = () => {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoryResponse = await fetch("/api/categories");
+        const productResponse = await fetch("/api/products");
+
+        if (!categoryResponse.ok || !productResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const categoryData = await categoryResponse.json();
+        const productData = await productResponse.json();
+
+        setCategories(categoryData);
+        setProducts(productData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  if (error) return <p className="text-center text-red-600">{error}</p>;
+
   return (
     <>
       <UserNavBar />
       <div>
         {/* Banner Section */}
         <div className="mt-32">
-          <img src={banner} className="w-full" alt="Banner" />
+          <img src={Banner1} className="w-full" alt="Banner" loading="lazy" />
         </div>
 
         {/* Popular Categories */}

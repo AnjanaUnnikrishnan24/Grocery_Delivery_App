@@ -23,7 +23,7 @@ const UserProfilePage = () => {
     fetchUser();
   }, []);
 
-  // Handle input change
+  // Handle input change/
   const handleChange = (e) => {
     setUpdatedUser({ ...updatedUser, [e.target.name]: e.target.value });
   };

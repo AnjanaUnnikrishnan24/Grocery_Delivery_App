@@ -16,55 +16,119 @@ const UpdateProduct = () => {
     const [weight,setWeight]=useState('')  
     const [stockQty,setStockQty]=useState('') 
     const [productImage,setProductImage]=useState(null)
-    const[loading,setLoading] = useState('')
-    const[error,setError] = useState('')
+    const [loading,setLoading] = useState('')
+    const [error,setError] = useState('')
+
+    const [categories,setCategories] = useState([])
+    const [subcategories,setSubCategories] = useState([])
 
     
 
-    const SubmitForm = async(e) =>{
-        try{
-            const updatedProduct = {
-                ProductName:productName, 
-                Category:category,
-                SubCategory:subCategory, 
-                Brand:brand, 
-                DietaryType:dietaryType, 
-                MRP:mrp,  
-                DiscountPercent:discountPercent, 
-                Weight:weight, 
-                StockQty:stockQty,
-            }
-
-            const res = await fetch("/api/updateCourse",{
-                method:"PUT",
-                headers:{
-                    "Content-Type":"application/json",
-                },
-                credentials:"include",
-                body:JSON.stringify(updatedProduct),
-            });
-
-            const data = await res.text();
-
-            if(!Response.ok){
-                throw new Error(data || "Failed to update course")
-            }
-
-            toast.success("Product updated successfully !!");
-            navigate("/home");
-        }catch(error){
-            console.error("Update error:", error);
-            toast.error(error.message);
+    useEffect(() => {
+      const fetchProduct = async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`/api/getProduct/${productId}`);
+          const data = await res.json();
+  
+          if (!res.ok) {
+            throw new Error(data.message || "Failed to fetch product details");
+          }
+  
+          // Populate the form fields
+          setProductName(data.productName);
+          setCategory(data.category);
+          setSubCategory(data.subCategory);
+          setDietaryType(data.dietaryType);
+          setBrand(data.brand);
+          setMrp(data.mrp);
+          setDiscountPercent(data.discountPercent);
+          setWeight(data.weight);
+          setStockQty(data.stockQty);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
         }
-    }
-
-    if(loading){
-        return <div className='p-4'>Loading Product data....</div>
-    }
-
-    if (error) {
-        return <div className="p-4 text-red-500">{error}</div>;
-    }
+      };
+  
+      fetchProduct();
+    }, [productId]);
+  
+    // Fetch categories and subcategories
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const res = await fetch("/api/categories");
+          const data = await res.json();
+          setCategories(data);
+        } catch (err) {
+          console.error("Error fetching categories:", err);
+        }
+      };
+  
+      const fetchSubCategories = async () => {
+        try {
+          const res = await fetch("/api/subCategories");
+          const data = await res.json();
+          setSubCategories(data);
+        } catch (err) {
+          console.error("Error fetching subcategories:", err);
+        }
+      };
+  
+      fetchCategories();
+      fetchSubCategories();
+    }, []);
+  
+    const submitForm = async (e) => {
+      e.preventDefault();
+  
+      try {
+        setLoading(true);
+        setError("");
+  
+        const updatedProduct = {
+          productName,
+          category,
+          subCategory,
+          brand,
+          dietaryType,
+          mrp,
+          discountPercent,
+          weight,
+          stockQty,
+        };
+  
+        const res = await fetch(`/api/updateProduct/${productId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(updatedProduct),
+        });
+  
+        const data = await res.json();
+  
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to update product");
+        }
+  
+        toast.success("Product updated successfully!");
+        navigate("/home");
+      } catch (error) {
+        console.error("Update error:", error);
+        toast.error(error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (loading) return <div className="p-4">Loading Product data...</div>;
+    if (error) return <div className="p-4 text-red-500">{error}</div>;
+  
 
   return (
     <>
@@ -74,7 +138,7 @@ const UpdateProduct = () => {
           Update Product
         </h2>
 
-        <form onSubmit={SubmitForm}>
+        <form onSubmit={submitForm}>
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -94,27 +158,39 @@ const UpdateProduct = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Product Category
               </label>
-              <input
-                type="text"
-                name="category"
+              <select
                 value={category}
-                onChange={(e)=>setCategory(e.target.value)}
+                onChange={(e) => setCategory(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {/* SubCategory Dropdown */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Product Sub Category
               </label>
-              <input
-                type="text"
-                name="category"
+              <select
                 value={subCategory}
-                onChange={(e)=>setSubCategory(e.target.value)}
+                onChange={(e) => setSubCategory(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
+              >
+                <option value="">Select SubCategory</option>
+                {subcategories.map((sub) => (
+                  <option key={sub._id} value={sub.name}>
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

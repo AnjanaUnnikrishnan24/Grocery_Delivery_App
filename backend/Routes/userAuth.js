@@ -45,7 +45,7 @@ userAuth.post('/login',async(req,res)=>{
         else{
             console.log(result.password);
             const valid = await bcrypt.compare(Password,result.password);
-            console.log(valid);
+            
             if(valid){
                 const token = jwt.sign({Email:Email,UserRole:result.userRole},process.env.SECRET_KEY,{expiresIn:'4h'});
                 console.log(token);
@@ -54,6 +54,9 @@ userAuth.post('/login',async(req,res)=>{
                     httpOnly:true
                 });
                 res.status(200).json({message:"Logged in successfully"});
+                Users.last_login_date = Date.now();
+                await Users.save();
+                console.log(valid);
             }
             else{
                 res.status(401).json({message:"Unauthorized access"});

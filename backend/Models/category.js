@@ -1,22 +1,16 @@
 import { Schema, model } from 'mongoose';
 
-// Category Schema
+const subCategorySchema = new Schema({
+    subCatName: { type: String, required: true, trim: true }
+});
 
+// Category Schema
 const categorySchema = new Schema({
-    catName: { type: String, required: true },
-    CatImage: { type: String }
+    catName: { type: String, required: true, unique: true, trim: true },
+    catImage: { type: String, trim: true },
+    subCategories: [subCategorySchema] 
 }, { timestamps: true });
 
 const Category = model("Category", categorySchema);
 
-// Sub Category Schema
-
-const subCategorySchema = new Schema({
-    subname: { type: String, required: true },
-    subimage: { type: String },
-    categoryId: [{ type: Schema.Types.ObjectId, ref: "Category" }]
-}, { timestamps: true });
-
-const SubCategory = model("SubCategory", subCategorySchema);
-
-export { Category , SubCategory };
+export default Category;

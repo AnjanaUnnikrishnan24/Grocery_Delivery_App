@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-//import { whatsapp, facebook, instagram } from "../assets";
-import whatsapp from '../assets/whatsapp.png'
+import whatsapp from "../assets/images/whatsapp.png"
+import instagram from "../assets/images/instagram.png"
+import facebook from "../assets/images/facebook.png"
+
 const ContactPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center items-center px-4 sm:px-6 lg:px-8 py-10">

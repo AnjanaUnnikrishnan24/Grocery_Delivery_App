@@ -3,6 +3,7 @@ import authenticate from "../Middleware/auth.js";
 import adminCheck from "../Middleware/adminCheck.js";
 import upload from "../Middleware/upload.js";
 import {product} from "../Models/product.js"
+import Category from "../Models/category.js";
 
 const adminRoutes = Router();
 
@@ -110,6 +111,100 @@ adminRoutes.delete('/deleteProduct',authenticate,adminCheck, async (req,res)=>{
     }
 });
 
+
+adminRoutes.post("/addCategory", authenticate, adminCheck, async (req, res) => {
+    try {
+        const { catName, catImage, subCategories } = req.body;
+
+        // Check if category already exists
+        const existingCategory = await Category.findOne({ catName });
+        if (existingCategory) {
+            return res.status(400).json({ message: "Category already exists!" });
+        }
+
+        // Create new category
+        const newCategory = new Category({
+            catName,
+            catImage,
+            subCategories: subCategories.map(subCat => ({ subCatName: subCat })) 
+        });
+
+        await newCategory.save();
+        res.status(201).json({ message: "Category added successfully!" });
+
+    } catch (error) {
+        console.error("Error adding category:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// View All Categories
+adminRoutes.get("/categories", authenticate, adminCheck, async (req, res) => {
+    try {
+        const categories = await Category.find();
+
+        if (!categories || categories.length === 0) {
+            return res.status(404).json({ message: "No categories found!" });
+        }
+
+        res.status(200).json(categories);
+
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// View All Subcategories
+adminRoutes.get("/subcategories", authenticate, adminCheck, async (req, res) => {
+    try {
+        const categories = await Category.find();
+
+        if (!categories || categories.length === 0) {
+            return res.status(404).json({ message: "No categories found!" });
+        }
+
+        const subcategories = categories.flatMap(category => 
+            category.subCategories.map(subCat => ({
+                categoryId: category._id,
+                categoryName: category.catName,
+                subCategoryId: subCat._id,
+                subCategoryName: subCat.subCatName
+            }))
+        );
+
+        if (subcategories.length === 0) {
+            return res.status(404).json({ message: "No subcategories found!" });
+        }
+
+        res.status(200).json(subcategories);
+
+    } catch (error) {
+        console.error("Error fetching subcategories:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
+// Delete a Category by ID
+adminRoutes.delete("/deleteCategory/:categoryId", authenticate, adminCheck, async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({ message: "Category not found!" });
+        }
+
+        await Category.findByIdAndDelete(categoryId);
+
+        res.status(200).json({ message: "Category deleted successfully!" });
+
+    } catch (error) {
+        console.error("Error deleting category:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 
 adminRoutes.get('/inventory',authenticate,adminCheck, async (req,res)=>{
     try {
