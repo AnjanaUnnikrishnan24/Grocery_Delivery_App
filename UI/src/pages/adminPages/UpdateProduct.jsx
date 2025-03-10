@@ -1,137 +1,109 @@
-import React, {useEffect,useState} from 'react'
-import {useParams,useNavigate} from 'react-router-dom'
-import {toast} from 'react-toastify'
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const UpdateProduct = () => {
-    const {productId} = useParams();
-    const navigate = useNavigate();
+  const { productId } = useParams();
+  const navigate = useNavigate();
 
-    const [productName,setProductName]=useState('')   
-    const [category,setCategory]=useState('')  
-    const [subCategory,setSubCategory]=useState('') 
-    const [dietaryType,setDietaryType]=useState('Veg') 
-    const [brand,setBrand]=useState('')  
-    const [mrp,setMrp]=useState('')  
-    const [discountPercent,setDiscountPercent]=useState('') 
-    const [weight,setWeight]=useState('')  
-    const [stockQty,setStockQty]=useState('') 
-    const [productImage,setProductImage]=useState(null)
-    const [loading,setLoading] = useState('')
-    const [error,setError] = useState('')
+  const [productName, setProductName] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+  const [dietaryType, setDietaryType] = useState('Veg');
+  const [brand, setBrand] = useState('');
+  const [mrp, setMrp] = useState('');
+  const [discountPercent, setDiscountPercent] = useState('');
+  const [weight, setWeight] = useState('');
+  const [stockQty, setStockQty] = useState('');
+  const [productImage, setProductImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [categories, setCategories] = useState([]);
 
-    const [categories,setCategories] = useState([])
-    const [subcategories,setSubCategories] = useState([])
-
-    
-
-    useEffect(() => {
-      const fetchProduct = async () => {
-        setLoading(true);
-        try {
-          const res = await fetch(`/api/getProduct/${productId}`);
-          const data = await res.json();
-  
-          if (!res.ok) {
-            throw new Error(data.message || "Failed to fetch product details");
-          }
-  
-          // Populate the form fields
-          setProductName(data.productName);
-          setCategory(data.category);
-          setSubCategory(data.subCategory);
-          setDietaryType(data.dietaryType);
-          setBrand(data.brand);
-          setMrp(data.mrp);
-          setDiscountPercent(data.discountPercent);
-          setWeight(data.weight);
-          setStockQty(data.stockQty);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchProduct();
-    }, [productId]);
-  
-    // Fetch categories and subcategories
-    useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const res = await fetch("/api/categories");
-          const data = await res.json();
-          setCategories(data);
-        } catch (err) {
-          console.error("Error fetching categories:", err);
-        }
-      };
-  
-      const fetchSubCategories = async () => {
-        try {
-          const res = await fetch("/api/subCategories");
-          const data = await res.json();
-          setSubCategories(data);
-        } catch (err) {
-          console.error("Error fetching subcategories:", err);
-        }
-      };
-  
-      fetchCategories();
-      fetchSubCategories();
-    }, []);
-  
-    const submitForm = async (e) => {
-      e.preventDefault();
-  
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError("");
-  
-        const updatedProduct = {
-          productName,
-          category,
-          subCategory,
-          brand,
-          dietaryType,
-          mrp,
-          discountPercent,
-          weight,
-          stockQty,
-        };
-  
-        const res = await fetch(`/api/updateProduct/${productId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(updatedProduct),
-        });
-  
+        const res = await fetch(`/api/getProduct/${productId}`);
         const data = await res.json();
-  
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to update product");
-        }
-  
-        toast.success("Product updated successfully!");
-        navigate("/home");
-      } catch (error) {
-        console.error("Update error:", error);
-        toast.error(error.message);
-        setError(error.message);
+        if (!res.ok) throw new Error(data.message || "Failed to fetch product details");
+
+        setProductName(data.productName);
+        setCategoryName(data.categoryName);
+        setDietaryType(data.dietaryType);
+        setBrand(data.brand);
+        setMrp(data.mrp);
+        setDiscountPercent(data.discountPercent);
+        setWeight(data.weight);
+        setStockQty(data.stockQty);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-  
-    if (loading) return <div className="p-4">Loading Product data...</div>;
-    if (error) return <div className="p-4 text-red-500">{error}</div>;
-  
 
-  return (
-    <>
+    fetchProduct();
+  }, [productId]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const submitForm = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError("");
+
+      const formData = new FormData();
+      formData.append('productName', productName);
+      formData.append('categoryName', categoryName);
+      formData.append('dietaryType', dietaryType);
+      formData.append('brand', brand);
+      formData.append('mrp', mrp);
+      formData.append('discountPercent', discountPercent);
+      formData.append('weight', weight);
+      formData.append('stockQty', stockQty);
+      if (productImage) formData.append('productImage', productImage);
+
+      const res = await fetch(`/api/updateProduct/${productId}`, {
+        method: "PUT",
+        credentials: "include",
+        body: formData,
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update product");
+
+      toast.success("Product updated successfully!");
+      navigate("/home");
+    } catch (err) {
+      console.error("Update error:", err);
+      toast.error(err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className="p-4">Loading Product data...</div>;
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
+
+  return loading ? (
+    <div className="p-4">Loading Product data...</div>
+  ) : error ? (
+    <div className="p-4 text-red-500">{error}</div>
+  ) : (
     <div className="bg-gray-200 font-sans">
       <main className="ml-72 p-8 bg-white shadow-lg rounded-lg w-[75%] mt-6">
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
@@ -148,7 +120,7 @@ const UpdateProduct = () => {
                 type="text"
                 name="productName"
                 value={productName}
-                onChange={(e)=>setProductName(e.target.value)}
+                onChange={(e) => setProductName(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -159,39 +131,21 @@ const UpdateProduct = () => {
                 Product Category
               </label>
               <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat.name}>
-                    {cat.name}
+                    {cat.catname}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* SubCategory Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Product Sub Category
-              </label>
-              <select
-                value={subCategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select SubCategory</option>
-                {subcategories.map((sub) => (
-                  <option key={sub._id} value={sub.name}>
-                    {sub.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -200,7 +154,7 @@ const UpdateProduct = () => {
               <select
                 name="dietaryType"
                 value={dietaryType}
-                onChange={(e)=>setDietaryType(e.target.value)}
+                onChange={(e) => setDietaryType(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Veg">Veg</option>
@@ -216,7 +170,7 @@ const UpdateProduct = () => {
               <input
                 type="text"
                 value={brand}
-                onChange={(e)=>setBrand(e.target.value)}
+                onChange={(e) => setBrand(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -229,7 +183,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 value={mrp}
-                onChange={(e)=>setMrp(e.target.value)}
+                onChange={(e) => setMrp(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -242,7 +196,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 value={discountPercent}
-                onChange={(e)=>setDiscountPercent(e.target.value)}
+                onChange={(e) => setDiscountPercent(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -255,7 +209,7 @@ const UpdateProduct = () => {
               <input
                 type="text"
                 value={weight}
-                onChange={(e)=>setWeight(e.target.value)}
+                onChange={(e) => setWeight(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -268,7 +222,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 value={stockQty}
-                onChange={(e)=>setStockQty(e.target.value)}
+                onChange={(e) => setStockQty(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -280,8 +234,7 @@ const UpdateProduct = () => {
               </label>
               <input
                 type="file"
-                onChange={(e)=>setProductImage(e.target.files[0])}
-                required
+                onChange={(e) => setProductImage(e.target.files[0])}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -290,16 +243,15 @@ const UpdateProduct = () => {
           <div className="flex gap-4 mt-6 justify-center">
             <button
               type="submit"
-              className="bg-green-500 text-white py-3 px-6 rounded-lg font-medium "
-             >
+              className="bg-green-500 text-white py-3 px-6 rounded-lg font-medium"
+            >
               Update Product
             </button>
           </div>
         </form>
       </main>
     </div>
-    </>
-  )
-}
+  );
+};
 
-export default UpdateProduct
+export default UpdateProduct;

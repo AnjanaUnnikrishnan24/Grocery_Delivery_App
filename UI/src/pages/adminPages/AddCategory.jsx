@@ -1,164 +1,144 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import CategoryCard from "../../components/CategoryCard";
-import AdminNavBar from "../../components/AdminNavBar";
-
-const AddCategory = () => {
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+ 
+function AddCategory() {
+  const navigate = useNavigate();
+ 
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState({ name: "", image: "" });
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [newSubCategory, setNewSubCategory] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryImage, setNewCategoryImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch categories from backend
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("/api/categories");
-        const data = await res.json();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
+   const fetchCategories = useCallback(async () => {
+    try {
+      const response = await fetch("/api/categories");
+      if (!response.ok) throw new Error("Failed to fetch categories");
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   }, []);
 
-  // Add a new category
-  const handleAddCategory = async () => {
-    if (!newCategory.name || !newCategory.image) {
-      toast.error("Please enter both name and image URL.");
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleFileChange = (e) => {
+    setNewCategoryImage(e.target.files[0]);
+  };
+
+  async function handleAddCategory() {
+    if (!newCategoryName.trim() || !newCategoryImage) {
+      alert("Category name and image are required!");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", newCategoryName);
+    formData.append("image", newCategoryImage);
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/categories", {
+      const response = await fetch("/api/addCategory", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newCategory),
+        credentials:"include",
+        body: formData,
       });
 
-      if (res.ok) {
-        const savedCategory = await res.json();
-        setCategories([...categories, savedCategory]);
-        setNewCategory({ name: "", image: "" });
-        toast.success("Category added successfully!");
+      const result = await response.json(); 
+
+      if (!response.ok) {
+        console.error("Server Response:", result); 
+        throw new Error(result.message || "Error adding product");
+      }
+
+      if (response.ok) {
+        alert(result.message || "Category added successfully!");
+        setNewCategoryName("");
+        setNewCategoryImage(null);
+        document.getElementById("category-image-input").value = "";
+        fetchCategories();
       } else {
-        throw new Error("Failed to add category.");
+        alert(result.message || "Error adding category");
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error adding category:", error);
+      alert("Failed to add category.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  // Add a new subcategory
-  const handleAddSubCategory = async () => {
-    if (!selectedCategory || !newSubCategory) {
-      toast.error("Please select a category and enter a subcategory name.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/categories/${selectedCategory}/subcategories`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newSubCategory }),
-      });
-
-      if (res.ok) {
-        const updatedCategory = await res.json();
-        setCategories(
-          categories.map((cat) => (cat._id === updatedCategory._id ? updatedCategory : cat))
-        );
-        setNewSubCategory("");
-        toast.success("Subcategory added successfully!");
-      } else {
-        throw new Error("Failed to add subcategory.");
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+  if (profileLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <>
-    <AdminNavBar></AdminNavBar>
     <div className="p-16 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Manage Categories</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-center">
+        Manage Categories
+      </h2>
 
-      {/* Add New Category Form */}
-      <div className="bg-white shadow p-4 rounded-md mb-6 ml-64 mr-32">
-        <h3 className="text-lg font-semibold mb-2">Add New Category</h3>
+      <div className="bg-white shadow p-4 rounded-md mb-6">
+        <h3 className="text-lg font-semibold mb-2">
+          Add New Category
+        </h3>
         <input
           type="text"
           placeholder="Category Name"
-          value={newCategory.name}
-          onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+          value={newCategoryName}
+          onChange={(e) => setNewCategoryName(e.target.value)}
           className="border p-2 rounded w-full mb-2"
         />
         <input
-          type="text"
-          placeholder="Image URL"
-          value={newCategory.image}
-          onChange={(e) => setNewCategory({ ...newCategory, image: e.target.value })}
+          id="category-image-input"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
           className="border p-2 rounded w-full mb-4"
         />
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400"
           onClick={handleAddCategory}
+          disabled={loading}
         >
-          Add Category
+          {loading ? "Adding..." : "Add Category"}
         </button>
       </div>
 
-      {/* Add New Subcategory */}
-      <div className="bg-white shadow p-4 rounded-md mb-6 ml-64 mr-32">
-        <h3 className="text-lg font-semibold mb-2">Add New Subcategory</h3>
-        <select
-          className="border p-2 rounded w-full mb-2"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="">Select Category</option>
-          {categories.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Subcategory Name"
-          value={newSubCategory}
-          onChange={(e) => setNewSubCategory(e.target.value)}
-          className="border p-2 rounded w-full mb-4"
-        />
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={handleAddSubCategory}
-        >
-          Add Subcategory
-        </button>
-      </div>
-
-      {/* Category List */}
-      <div className="grid grid-cols-3 gap-6">
-        {categories.map((category) => (
-          <div key={category._id} className="bg-white p-4 shadow rounded-md">
-            <CategoryCard image={category.image} name={category.name} />
-            <h4 className="font-semibold mt-2">Subcategories:</h4>
-            <ul className="list-disc pl-5 text-sm text-gray-600">
-              {category.subCategories.length > 0 ? (
-                category.subCategories.map((sub, index) => <li key={index}>{sub.name}</li>)
-              ) : (
-                <li className="text-gray-400">No subcategories</li>
-              )}
-            </ul>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <CategoryCard key={category._id} category={category} />
+          ))
+        ) : (
+          <p className="text-center col-span-3 text-gray-500">
+            No categories available.
+          </p>
+        )}
       </div>
     </div>
-    </>
   );
-};
+}
+
+function CategoryCard({ category }) {
+  const imageSrc = category.catImage
+    ? `data:image/*;base64,${category.catImage}`
+    : "";
+
+  return (
+    <div className="bg-white p-4 shadow rounded-md">
+      <img
+        src={imageSrc}
+        alt={category.catName}
+        className="w-full h-[400px] object-cover rounded-md"
+      />
+      <h3 className="text-lg font-semibold mt-2">
+        {category.catName}
+      </h3>
+    </div>
+  );
+}
 
 export default AddCategory;

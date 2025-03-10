@@ -6,7 +6,6 @@ const SignUp = () => {
     const [phonenumber,setPhonenumber] = useState('');
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
-    const [userRole,setUserRole]= useState('user');
     const [error,setError] = useState('');
     const navigate = useNavigate();
     
@@ -23,8 +22,7 @@ const SignUp = () => {
                     FullName : fullName,
                     PhoneNo:phonenumber,
                     Email:email,
-                    Password:password,
-                    UserRole:userRole,                   
+                    Password:password,                 
                 }),
             });
 
@@ -44,21 +42,6 @@ const SignUp = () => {
     <div className="bg-gray-200 flex items-center justify-center min-h-screen">
     <form onSubmit={handleSignup} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-2 text-gray-800 text-center">Create an account</h2>
-
-        <label 
-            for="userRole" 
-            className="block text-sm font-medium text-gray-700 mb-1"
-        >User Type
-        </label>
-        <select 
-            name="usertype" 
-            id="userRole" 
-            value={userRole}
-            onChange={(e)=>setUserRole(e.target.value)}
-            class="block border border-gray-300 text-sm font-medium w-full p-2 rounded-lg mb-2">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select>
 
         <label 
             className="block text-sm font-medium text-gray-700 mb-1"

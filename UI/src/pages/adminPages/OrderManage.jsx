@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 const OrderManage = () => {
   const [orders, setOrders] = useState([]);
 
-  // Fetch orders from API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -17,17 +16,18 @@ const OrderManage = () => {
     fetchOrders();
   }, []);
 
+  // Update the deliveryStatus field on the backend and update local state
   const handleStatusChange = async (id, newStatus) => {
     try {
       await fetch(`http://localhost:5000/api/admin/orders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ deliveryStatus: newStatus }),
       });
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          order._id === id ? { ...order, status: newStatus } : order
+          order._id === id ? { ...order, deliveryStatus: newStatus } : order
         )
       );
     } catch (error) {
@@ -47,31 +47,43 @@ const OrderManage = () => {
               <tr className="bg-gray-200">
                 <th className="border px-4 py-2">Order ID</th>
                 <th className="border px-4 py-2">Customer</th>
-                <th className="border px-4 py-2">Total Amount</th>
-                <th className="border px-4 py-2">Status</th>
+                <th className="border px-4 py-2">Total Amount (Rs)</th>
+                <th className="border px-4 py-2">Delivery Status</th>
                 <th className="border px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-4">No orders available.</td>
+                  <td colSpan="5" className="text-center py-4">
+                    No orders available.
+                  </td>
                 </tr>
               ) : (
                 orders.map((order, index) => (
                   <tr key={index} className="border-b">
-                    <td className="border px-4 py-2">{order._id}</td>
-                    <td className="border px-4 py-2">{order.customerName}</td>
-                    <td className="border px-4 py-2 font-semibold text-green-600">₹{order.totalAmount}</td>
+                    <td className="border px-4 py-2">{order.orderId}</td>
+                    <td className="border px-4 py-2">
+                      {order.userId && order.userId.name
+                        ? order.userId.name
+                        : order.userId}
+                    </td>
+                    <td className="border px-4 py-2 font-semibold text-green-600">
+                      ₹{order.totalAmt}
+                    </td>
                     <td className="border px-4 py-2">
                       <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        value={order.deliveryStatus}
+                        onChange={(e) =>
+                          handleStatusChange(order._id, e.target.value)
+                        }
                         className="border p-1 rounded"
                       >
                         <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
                         <option value="Shipped">Shipped</option>
                         <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
                       </select>
                     </td>
                     <td className="border px-4 py-2 text-center">

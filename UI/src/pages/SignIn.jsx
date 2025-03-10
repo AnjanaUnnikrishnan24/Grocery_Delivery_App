@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import UserNavBar from '../components/UserNavBar';
 
 const SignIn = () => {
     const [useremail, setUserEmail] = useState('');
@@ -22,11 +21,18 @@ const SignIn = () => {
                     Password: password
                 }),
             });
+             const data=await response.json()
+
             if (!response.ok) {
                 const errData = await response.json();
                 throw new Error(errData.msg || 'Login failed');
             }
-            navigate('/dashboard');
+            if (data.role == 'admin'){
+                navigate('/dashboard')
+            }else{
+                navigate('/');
+            }
+            
         } catch (err) {
             setError(err.message || 'Invalid credentials: Please try again!');
         }
@@ -34,7 +40,6 @@ const SignIn = () => {
 
     return (
         <>
-            <UserNavBar />
             <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
                 <form onSubmit={handleSignIn} className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
                     <h2 className="text-2xl font-bold text-gray-700 text-center">Sign In</h2>
@@ -74,8 +79,7 @@ const SignIn = () => {
                     </button>
                 </form>
 
-                {/* Properly positioned Sign Up link */}
-                <p className="text-sm text-gray-600 text-center mt-4">
+                 <p className="text-sm text-gray-600 text-center mt-4">
                     Don't have an account?  
                     <Link to='/signup' className="text-green-500 hover:underline ml-1">Sign Up</Link>
                 </p>

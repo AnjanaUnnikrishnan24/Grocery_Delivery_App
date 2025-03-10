@@ -13,7 +13,6 @@ const OrderHistoryPage = () => {
   const [error, setError] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // Fetch orders from backend API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -23,7 +22,6 @@ const OrderHistoryPage = () => {
         const data = await response.json();
         setOrders(data);
 
-        // Calculate summary
         let totalMRP = 0;
         let totalDiscount = 0;
         let finalTotal = 0;
@@ -51,7 +49,6 @@ const OrderHistoryPage = () => {
     fetchOrders();
   }, []);
 
-  // Fetch full order details on demand
   const fetchOrderDetails = async (orderId) => {
     try {
       const response = await fetch(`http://localhost:5000/api/orders/${orderId}`);
@@ -67,7 +64,6 @@ const OrderHistoryPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-6">
       <main className="max-w-4xl mx-auto">
-        {/* Orders Table */}
         <section className="bg-white p-6 shadow-md rounded-md">
           <h2 className="text-2xl font-semibold mb-4">My Orders</h2>
 
@@ -120,7 +116,6 @@ const OrderHistoryPage = () => {
           )}
         </section>
 
-        {/* Order Details Modal */}
         {selectedOrder && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
@@ -146,7 +141,6 @@ const OrderHistoryPage = () => {
           </div>
         )}
 
-        {/* Order Summary */}
         <div className="bg-white p-6 mt-6 shadow-md rounded-md">
           <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
           <table className="w-full border-collapse border border-gray-300">

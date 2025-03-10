@@ -9,10 +9,11 @@ const ProductGrid = ({ products }) => {
     try {
       const response = await fetch("/api/cart/add", {
         method: "POST",
+        credentials:'include',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId: product._id || product.productId, quantity: 1 }),
+        body: JSON.stringify({ productId: product._id, quantity: 1 }),
       });
 
       if (!response.ok) {
@@ -32,7 +33,7 @@ const ProductGrid = ({ products }) => {
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Our Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <ProductCard key={product._id || product.productId} product={product} onAddToCart={handleAddToCart} />
+          <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
         ))}
       </div>
     </div>

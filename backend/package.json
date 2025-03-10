@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cookie": "^1.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
@@ -21,7 +23,6 @@
     "nodemon": "^3.1.9",
     "path": "^0.12.7"
   },
-  "devDependencies": {},
   "keywords": [],
   "description": ""
 }

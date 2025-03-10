@@ -1,25 +1,19 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 const CategoryCard = ({ category }) => {
-  const navigate = useNavigate();
 
-  const showProducts = () => {
-    navigate(`/products?category=${category.name}`);
-  };
+  const imageSrc = category.catImage
+    ? `data:image/png;base64,${category.catImage}`
+    : "https://via.placeholder.com/400";
 
   return (
-    <div
-      className="flex flex-col items-center bg-white rounded-lg shadow hover:shadow-lg p-4 transition cursor-pointer"
-      onClick={showProducts}
-    >
+    <div className="bg-white p-4 shadow rounded-md">
       <img
-        src={category.image}
-        className="w-32 h-32 object-cover rounded-md mb-4"
-        alt={category.name}
-        loading="lazy"
+        src={imageSrc}
+        alt={category.catName}
+        className="w-full h-[400px] object-cover rounded-md"
       />
-      <h4 className="text-lg font-semibold text-gray-700">{category.name}</h4>
+      <h3 className="text-lg font-semibold mt-2">{category.catName}</h3>
     </div>
   );
 };

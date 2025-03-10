@@ -9,13 +9,13 @@ const Logout = () => {
     try {
       const res = await fetch("/api/logout", {
         method: "POST",
-        credentials: "include", // Ensures cookies are sent with the request
+        credentials: "include", 
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      const data = await res.json(); // Parse response
+      const data = await res.json(); 
 
       if (res.ok) {
         toast.success(data.message || "Logout successful");

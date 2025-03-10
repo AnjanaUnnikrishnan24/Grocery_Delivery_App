@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 
 const AddProduct = () => {
-  const [productName, setProductName] = useState(""); 
-  const [productId, setProductId] = useState("");  
-  const [category, setCategory] = useState("");  
-  const [subCategory, setSubCategory] = useState(""); 
-  const [dietaryType, setDietaryType] = useState("Vegetarian"); 
-  const [brand, setBrand] = useState("");  
-  const [mrp, setMrp] = useState("");  
-  const [discountPercent, setDiscountPercent] = useState(""); 
-  const [weight, setWeight] = useState("");  
-  const [stockQty, setStockQty] = useState(""); 
+  const [productName, setProductName] = useState("");
+  const [productId, setProductId] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [dietaryType, setDietaryType] = useState("Veg");
+  const [brand, setBrand] = useState("");
+  const [mrp, setMrp] = useState("");
+  const [discountPercent, setDiscountPercent] = useState("");
+  const [weight, setWeight] = useState("");
+  const [stockQty, setStockQty] = useState("");
   const [productImage, setProductImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null); // New state for preview
+  const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -22,6 +21,7 @@ const AddProduct = () => {
         const response = await fetch("/api/categories");
         const data = await response.json();
         setCategories(data);
+        if (data.length > 0) setCategoryName(data[0].name);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -29,34 +29,29 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchSubCategories = async () => {
-      if (!category) return;
-      try {
-        const response = await fetch(`/api/subcategories?category=${category}`);
-        const data = await response.json();
-        setSubCategories(data);
-      } catch (error) {
-        console.error("Error fetching subcategories:", error);
-      }
-    };
-    fetchSubCategories();
-  }, [category]);
-
   const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (file) {
       setProductImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Generate preview URL
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Input validation
+    if (!productName || !productId || !categoryName || !brand || !mrp || !stockQty) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
     if (isNaN(mrp) || isNaN(discountPercent) || isNaN(stockQty)) {
       alert("Please enter valid numerical values.");
+      return;
+    }
+
+    if (mrp < 0 || discountPercent < 0 || stockQty < 0) {
+      alert("Values cannot be negative.");
       return;
     }
 
@@ -64,20 +59,19 @@ const AddProduct = () => {
       const formData = new FormData();
       formData.append("productName", productName);
       formData.append("productId", productId);
-      formData.append("category", category);
-      formData.append("subCategory", subCategory);
+      formData.append("categoryName", categoryName);
       formData.append("brand", brand);
       formData.append("dietaryType", dietaryType);
-      formData.append("mrp", mrp);
-      formData.append("discountPercent", discountPercent);
+      formData.append("mrp", parseFloat(mrp));
+      formData.append("discountPercent",  parseFloat(discountPercent));
       formData.append("weight", weight);
-      formData.append("stockQty", stockQty);
+      formData.append("stockQty", parseInt(stockQty, 10));
 
       if (productImage) {
         formData.append("productImage", productImage);
       }
 
-      const response = await fetch("/api/addproducts", {
+      const response = await fetch("/api/addProducts", {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -90,9 +84,8 @@ const AddProduct = () => {
       alert("Product added successfully!");
       setProductName("");
       setProductId("");
-      setCategory("");
-      setSubCategory("");
-      setDietaryType("Vegetarian");
+      setCategoryName(categories.length > 0 ? categories[0].name : "");
+      setDietaryType("Veg");
       setBrand("");
       setMrp("");
       setDiscountPercent("");
@@ -103,6 +96,8 @@ const AddProduct = () => {
     } catch (err) {
       console.error(err);
       alert("Something went wrong: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,35 +144,15 @@ const AddProduct = () => {
                 Product Category
               </label>
               <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat.name}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* SubCategory Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Product Sub Category
-              </label>
-              <select
-                value={subCategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-                required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select SubCategory</option>
-                {subCategories.map((sub) => (
-                  <option key={sub._id} value={sub.name}>
-                    {sub.name}
+                    {cat.catName}
                   </option>
                 ))}
               </select>
@@ -193,8 +168,8 @@ const AddProduct = () => {
                 onChange={(e)=>setDietaryType(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Vegetarian">Vegetarian</option>
-                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Veg">Veg</option>
+                <option value="Non-Veg">Non-Veg</option>
                 <option value="Vegan">Vegan</option>
               </select>
             </div>
@@ -276,11 +251,7 @@ const AddProduct = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e)=>{
-                  if(e.target.files && e.target.files[0]){
-                    {setProductImage(e.target.files[0])}
-                  }
-                }}
+                onChange={handleImageChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
