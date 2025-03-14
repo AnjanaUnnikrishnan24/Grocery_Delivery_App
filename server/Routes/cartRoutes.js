@@ -119,11 +119,12 @@ import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import Product from "../Models/product.js";
 import Cart from "../Models/cart.js";
+import userCheck from "../Middleware/userCheck.js"
 
 const cartRoutes = Router();
 
 // View Cart
-cartRoutes.get("/viewCart", authenticate, async (req, res) => {
+cartRoutes.get("/viewCart", authenticate,userCheck, async (req, res) => {
     try {
         const cartItems = await Cart.find({ userId: req.user.id })
             .populate("prodId", "productName brand productImage discountedPrice");
@@ -136,7 +137,7 @@ cartRoutes.get("/viewCart", authenticate, async (req, res) => {
 });
 
 
-cartRoutes.post("/addToCart", authenticate, async (req, res) => {
+cartRoutes.post("/addToCart", authenticate,userCheck, async (req, res) => {
     try {
         console.log("Authenticated User:", req.user); // Debugging line
 
@@ -151,7 +152,7 @@ cartRoutes.post("/addToCart", authenticate, async (req, res) => {
             return res.status(400).json({ message: "Product ID is required!" });
         }
 
-        const product = await Product.findById(productId);
+        const product = await Product.findById(prodId);
         if (!product) {
             return res.status(404).json({ message: "Product not found!" });
         }
@@ -162,7 +163,7 @@ cartRoutes.post("/addToCart", authenticate, async (req, res) => {
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
 
-        res.status(200).json({ message: "Product added to cart!", cartItem });
+        res.json({ message: "Product added to cart!", cartItem });
 
     } catch (error) {
         console.error("Error adding product to cart:", error);
@@ -173,7 +174,7 @@ cartRoutes.post("/addToCart", authenticate, async (req, res) => {
 
 
 // Update Cart Quantity
-cartRoutes.put("/update/:productId", authenticate, async (req, res) => {
+cartRoutes.put("/update/:prodId", authenticate,userCheck, async (req, res) => {
     try {
         const { quantity } = req.body;
         if (quantity < 1) return res.status(400).json({ message: "Quantity must be at least 1!" });
@@ -193,7 +194,7 @@ cartRoutes.put("/update/:productId", authenticate, async (req, res) => {
 });
 
 // Remove Product from Cart
-cartRoutes.delete("/remove/:productId", authenticate, async (req, res) => {
+cartRoutes.delete("/remove/:prodId", authenticate,userCheck, async (req, res) => {
     try {
         const deletedItem = await Cart.findOneAndDelete({ userId: req.user.id, prodId: req.params.prodId });
 
@@ -208,7 +209,7 @@ cartRoutes.delete("/remove/:productId", authenticate, async (req, res) => {
 });
 
 // Clear Cart
-cartRoutes.delete("/clearCart", authenticate, async (req, res) => {
+cartRoutes.delete("/clearCart", authenticate,userCheck, async (req, res) => {
     try {
         await Cart.deleteMany({ userId: req.user.id });
 

@@ -13,8 +13,8 @@ import CartPage from "./pages/CartPage";
 import ContactPage from "./pages/ContactPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 
-import ProductListingPage from "./pages/ProductListingPage";
 import UpdateProduct from "./pages/adminPages/UpdateProducts";
+import ProductsPage from "./pages/ProductsPage";
 
 
 
@@ -43,7 +43,9 @@ const  App = () => {
         <Route path='/contacts' element={<ContactPage/>}/>
         <Route path='/History' element={<OrderHistoryPage/>}/>
         {/* <Route path="/product/:prodId" element={<ProductDetailsPage />} /> */}
-        <Route path='/listing' element={<ProductListingPage/>}/>
+        {/* <Route path='/listing' element={<ProductListingPage/>}/> */}
+        <Route path='/listing' element={<ProductsPage/>}/>
+
       
       </Routes>
     </BrowserRouter>

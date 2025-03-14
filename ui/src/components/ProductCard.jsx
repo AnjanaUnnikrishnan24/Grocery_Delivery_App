@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
     const token = localStorage.getItem("token");
     if (!token) {
       setErrorMsg("Please log in to add products to the cart.");
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/SignIn"), 2000);
       return;
     }
 
