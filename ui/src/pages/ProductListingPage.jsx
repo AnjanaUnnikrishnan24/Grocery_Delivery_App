@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
 
 const ProductListingPage = () => {
-  const { category = "all" } = useParams();
   const [selectedCategory, setSelectedCategory] = useState(category);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("none");

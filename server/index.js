@@ -1,14 +1,15 @@
 import express,{json} from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cookieParser from "cookie-parser";
 import cors from 'cors'
 import { userAuth } from './Routes/userAuth.js';
-import { adminRoutes } from './Routes/adminRoutes.js';
-import { userRoutes } from './Routes/userRoutes.js';
-import { cartRoutes } from './Routes/cartRoutes.js';
 import { productRoutes } from './Routes/productRoutes.js';
-import { categoryRoutes } from './Routes/categoryRoutes.js';
+import { cartRoutes } from './Routes/cartRoutes.js';
 import { orderRoutes } from './Routes/orderRoutes.js';
+import { userRoutes } from './Routes/userRoutes.js';
+import { adminRoutes } from './Routes/adminRoutes.js';
+
 
 
 dotenv.config();
@@ -21,16 +22,15 @@ app.use(cors({
 }))
 
 app.use(json());
+app.use(cookieParser()); 
+
 
 app.use('/',userAuth);
-app.use('/',adminRoutes);
-app.use('/',userRoutes);
-app.use('/',cartRoutes);
 app.use('/',productRoutes);
-app.use('/',categoryRoutes);
+app.use('/',cartRoutes);
 app.use('/',orderRoutes);
-
-
+app.use('/',userRoutes);
+app.use('/',adminRoutes)
 
 mongoose.connect('mongodb://localhost:27017/GROCERY').then(()=>{
     console.log("Mongodb connected Successfully to Grocery Website");})

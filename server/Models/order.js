@@ -6,12 +6,7 @@ const orderSchema = new Schema({
   productDetails: [{type: Schema.Types.ObjectId, ref: "Product", required: true} ],
   paymentType: { type: String, enum: ["COD", "UPI"], required: true },
   deliveryAddress: { type: Schema.Types.ObjectId, ref: "Address", required: true },
-  deliveryStatus: { 
-    type: String, 
-    enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"], 
-    default: "Pending", 
-    required: true 
-  },
+  deliveryStatus: { type: String, enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"], default: "Pending", required: true},
   subTotalAmt: { type: Number, required: true, min: 0 },
   totalAmt: { type: Number, required: true, min: 0 },
   orderDate: { type: Date, default: Date.now }

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "./Logout";
 import person from "../assets/images/person.png";
-import useProfile from "../hooks/useProfile";
+import useProfile from "../../../hooks/useProfile";
 
 const UserNavBar = () => {
   const { profile: user, loading } = useProfile();

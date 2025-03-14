@@ -1,10 +1,8 @@
-const adminCheck=(req,res,next)=>{
-    if(req.role=='admin'){
-        next();
+const adminCheck = (req, res, next) => {
+    if (!req.user || req.user.userRole !== "admin") {
+        return res.status(403).json({ message: "Only Admins can access." });
     }
-    else{
-        res.status(403).json({msg:"You are not allowed"})
-    }
-}
+    next();
+};
 
-export default adminCheck;
+export default adminCheck

@@ -13,11 +13,6 @@ const AdminDashboard = () => {
             <section className="bg-white p-6 rounded-lg shadow-md mb-6 text-center">
                 <h2 className="text-lg font-semibold mb-4">Product & Category Management</h2>
                 <div className="space-y-4">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded w-full">
-                        <Link to="/addCategory" className="hover:text-green-600 transition">
-                            Add New Category
-                        </Link>
-                    </button>
                     <button className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded w-full">
                         <Link to="/addproduct" className="hover:text-green-600 transition">
                             Add New Product

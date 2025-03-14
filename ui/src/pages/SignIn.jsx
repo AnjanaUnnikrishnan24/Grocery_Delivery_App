@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const SignIn = () => {
-    const [useremail, setUserEmail] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ const SignIn = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    Email: useremail,
+                    Email: email,
                     Password: password
                 }),
             });
@@ -27,6 +27,9 @@ const SignIn = () => {
                 const errData = await response.json();
                 throw new Error(errData.msg || 'Login failed');
             }
+
+            localStorage.setItem("token",data.token);
+
             if (data.role == 'admin'){
                 navigate('/dashboard')
             }else{
@@ -51,8 +54,8 @@ const SignIn = () => {
                             <label className="block text-sm font-medium text-gray-600">Email</label>
                             <input
                                 type="email"
-                                value={useremail}
-                                onChange={(e) => setUserEmail(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Enter your registered email address"
                                 className="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 required

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 
 const InventoryTable = () => {
   const [inventoryData, setInventoryData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admin/inventory");
+        const response = await fetch("/api/allproducts");
         if (!response.ok) {
           throw new Error("Failed to fetch inventory data");
         }
@@ -21,17 +20,13 @@ const InventoryTable = () => {
     fetchInventory();
   }, []);
 
-  // Handle search
-  const filteredData = inventoryData.filter((item) =>
-    item.productName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   // Handle Delete Product
   const handleDelete = async (productId) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/deleteProduct/${productId}`, {
+      const response = await fetch(`/api/deleteProduct/${productId}`, {
         method: "DELETE",
       });
 
@@ -50,22 +45,6 @@ const InventoryTable = () => {
     <main className="bg-white p-6 mt-2 shadow rounded-md ml-32 mr-2">
       <h2 className="text-lg font-semibold mb-4">Inventory</h2>
 
-      {/* Search Input */}
-      <div className="flex items-center space-x-2 mt-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search for products"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded-md py-2 px-4 w-[600px] 
-                     focus:outline-none focus:ring-2 focus:ring-green-500 
-                     focus:border-transparent"
-        />
-        <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-          Search
-        </button>
-      </div>
-
       {/* Inventory Table */}
       <table className="table-auto w-full text-sm text-gray-600 border-collapse">
         <thead>
@@ -83,7 +62,7 @@ const InventoryTable = () => {
         <tbody>
           {filteredData.map((item) => (
             <tr key={item.productId} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{item.productId}</td>
+              <td className="border px-4 py-2">{item.prodId}</td>
               <td className="border px-4 py-2">{item.productName}</td>
               <td className="border px-4 py-2">{item.category}</td>
               <td className="border px-4 py-2">{item.brand}</td>

@@ -6,9 +6,9 @@ import Order from "../Models/order.js";
 
 const adminRoutes = Router();
 
-adminRoutes.get("inventory", authenticate, adminCheck, async (req, res) => {
+adminRoutes.get("/inventory", authenticate, adminCheck, async (req, res) => {
     try {
-        const products = await Product.find().select("productName category brand mrp discountPercent discountedPrice stockQty productImage");
+        const products = await Product.find().select("productName categoryName brand mrp discountPercent discountedPrice stockQty productImage");
         
         if (!products.length) {
             return res.status(404).json({ message: "No products found in inventory!" });
@@ -21,7 +21,6 @@ adminRoutes.get("inventory", authenticate, adminCheck, async (req, res) => {
     }
 });
 
- 
 adminRoutes.get("/orders", authenticate, adminCheck, async (req, res) => {
     try {
         const orders = await Order.find()

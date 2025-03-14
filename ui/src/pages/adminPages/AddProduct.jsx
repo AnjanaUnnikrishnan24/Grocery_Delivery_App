@@ -1,109 +1,97 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import AdminDashboard from "./AdminDashboard";
 
 const AddProduct = () => {
   const [productName, setProductName] = useState("");
-  const [productId, setProductId] = useState("");
+  const [prodId, setProdId] = useState("");
   const [categoryName, setCategoryName] = useState("");
-  const [dietaryType, setDietaryType] = useState("Veg");
   const [brand, setBrand] = useState("");
+  const [dietaryType, setDietaryType] = useState("Veg");
   const [mrp, setMrp] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
   const [weight, setWeight] = useState("");
   const [stockQty, setStockQty] = useState("");
   const [productImage, setProductImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories");
-        const data = await response.json();
-        setCategories(data);
-        if (data.length > 0) setCategoryName(data[0].name);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
       setProductImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!productName || !productId || !categoryName || !brand || !mrp || !stockQty) {
-      alert("Please fill in all required fields.");
+    const parsedMrp = parseFloat(mrp);
+    const parsedDiscountPercent = parseFloat(discountPercent) || 0;
+    const parsedStockQty = parseInt(stockQty, 10);
+
+    if (!productName || !prodId || !categoryName || !brand || isNaN(parsedMrp) || isNaN(parsedStockQty)) {
+      alert("Please fill in all required fields correctly.");
       return;
     }
 
-    if (isNaN(mrp) || isNaN(discountPercent) || isNaN(stockQty)) {
-      alert("Please enter valid numerical values.");
+    if (parsedMrp <= 0 || parsedDiscountPercent < 0 || parsedStockQty < 0) {
+      alert("Values must be positive numbers.");
       return;
     }
 
-    if (mrp < 0 || discountPercent < 0 || stockQty < 0) {
-      alert("Values cannot be negative.");
-      return;
+    const formData = new FormData();
+    formData.append("ProductName", productName);
+    formData.append("ProdId", prodId);
+    formData.append("CategoryName", categoryName);
+    formData.append("Brand", brand);
+    formData.append("DietaryType", dietaryType);
+    formData.append("Mrp", parsedMrp);
+    formData.append("DiscountPercent", parsedDiscountPercent);
+    formData.append("Weight", weight);
+    formData.append("StockQty", parsedStockQty);
+
+    if (productImage) {
+      formData.append("productImage", productImage);
     }
 
     try {
-      const formData = new FormData();
-      formData.append("productName", productName);
-      formData.append("productId", productId);
-      formData.append("categoryName", categoryName);
-      formData.append("brand", brand);
-      formData.append("dietaryType", dietaryType);
-      formData.append("mrp", parseFloat(mrp));
-      formData.append("discountPercent",  parseFloat(discountPercent));
-      formData.append("weight", weight);
-      formData.append("stockQty", parseInt(stockQty, 10));
-
-      if (productImage) {
-        formData.append("productImage", productImage);
-      }
-
       const response = await fetch("/api/addProducts", {
         method: "POST",
         credentials: "include",
         body: formData,
       });
-      console.log(response)
+
       if (!response.ok) {
-        throw new Error("Error adding product");
+        throw new Error("Failed to add product.");
       }
-      
 
       alert("Product added successfully!");
-      setProductName("");
-      setProductId("");
-      setCategoryName(categories.length > 0 ? categories[0].name : "");
-      setDietaryType("Veg");
-      setBrand("");
-      setMrp("");
-      setDiscountPercent("");
-      setWeight("");
-      setStockQty("");
-      setProductImage(null);
-      setImagePreview(null);
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong: " + err.message);
-    } finally {
-      setLoading(false);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+      alert(`Error: ${error.message}`);
     }
   };
 
+  const resetForm = () => {
+    setProductName("");
+    setProdId("");
+    setCategoryName("");
+    setDietaryType("Veg");
+    setBrand("");
+    setMrp("");
+    setDiscountPercent("");
+    setWeight("");
+    setStockQty("");
+    setProductImage(null);
+    setPreviewImage(null);
+  };
+
+
   return (
     <>
+    <AdminDashboard />
+   
     <div className="bg-gray-200 font-sans">
       <main className="ml-72 p-8 bg-white shadow-lg rounded-lg w-[75%] mt-6">
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
@@ -133,8 +121,8 @@ const AddProduct = () => {
               <input
                 type="number"
                 name="productId"
-                value={productId}
-                onChange={(e)=>setProductId(e.target.value)}
+                value={prodId}
+                onChange={(e)=>setProdId(e.target.value)}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -151,11 +139,17 @@ const AddProduct = () => {
                 className="w-full text-black p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat.name}>
-                    {cat.catName}
-                  </option>
-                ))}
+                <option value="Fruits">Fruits</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Flour">Flour</option>
+                <option value="Oils">Oils</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Frozen Foods">Frozen Foods</option>
+                <option value="Dairy Products">Dairy Products</option>
+                <option value="Spices">Spices</option>
+                <option value="Cereals">Cereals</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Pulses">Pulses</option>
               </select>
             </div>
 
@@ -252,7 +246,11 @@ const AddProduct = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={(e)=>{
+                  if(e.target.files && e.target.files[0]){
+                    setProductImage(e.target.files[0]);
+                  }
+                }}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />

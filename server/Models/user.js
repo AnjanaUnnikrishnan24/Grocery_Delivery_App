@@ -9,7 +9,7 @@ const userSchema = new Schema({
   userRole: { type: String, enum: ["admin", "user"], default: "user" },
   addressDetails: [{type:Schema.Types.ObjectId,ref :"Address" }],
   lastLoginDate: { type: Date, default: Date.now },
-  shopping_cart :[{type:Schema.Types.ObjectId,ref :"cart"}],
+  shoppingCart :[{type:Schema.Types.ObjectId,ref :"cart"}],
   orderHistory : [{type:Schema.Types.ObjectId,ref :"order"}]
 },{timestamps:true})
 const User = model('User', userSchema);

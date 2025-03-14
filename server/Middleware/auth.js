@@ -1,31 +1,43 @@
-
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import cookie from "cookie";  
-
+import User from '../Models/user.js'
 dotenv.config();
 
-const authenticate = (req, res, next) => {
+// const authenticate = (req, res, next) => {
+//     const token = req.cookies.authToken;
+//     if (!token) {
+//         return res.status(401).json({ message: "Unauthorized access" });
+//     }
+
+//     try {
+//         const decoded = jwt.verify(token, process.env.SECRET_KEY);
+//         req.user = decoded;  
+//         next();
+//     } catch (error) {
+//         return res.status(403).json({ message: "Invalid token" });
+//     }
+// };
+
+const authenticate = async (req, res, next) => {
     try {
-        
-        if (!req.headers.cookie) return res.status(401).send("Unauthorized access");
+        const token = req.header("Authorization")?.split(" ")[1] || req.cookies.authToken; // Extract token from header
 
-        const cookies = cookie.parse(req.headers.cookie);
-        const token = cookies.authToken;
-        console.log(token);
-        
+        if (!token) {
+            return res.status(401).json({ message: "Access denied. No token provided." });
+        }
 
-        if (!token) return res.status(401).send("Unauthorized access");
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = await User.findById(decoded.id).select("-password"); // Attach user to request
 
-        const verified = jwt.verify(token, process.env.SECRET_KEY);
-        req.user = verified.email;
-        req.role = verified.userRole;
+        if (!req.user) {
+            return res.status(401).json({ message: "Invalid token or user not found." });
+        }
 
         next();
     } catch (error) {
-        console.error("Authentication error:", error);
-        res.status(401).send("Unauthorized access");
+        res.status(401).json({ message: "Invalid or expired token." });
     }
 };
+
 
 export default authenticate;

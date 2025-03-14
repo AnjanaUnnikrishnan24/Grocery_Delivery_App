@@ -13,13 +13,13 @@ const ProductCard = ({ product }) => {
     const token = localStorage.getItem("token");
     if (!token) {
       setErrorMsg("Please log in to add products to the cart.");
-      setTimeout(() => navigate("/SignIn"), 2000);
+      setTimeout(() => navigate("/login"), 2000);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch("/api/addCartProducts", {
+      const response = await fetch("/api/addToCart", {
         method: "POST",
         credentials: "include", 
         headers: {

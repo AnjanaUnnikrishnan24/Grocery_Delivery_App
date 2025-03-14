@@ -1,10 +1,8 @@
-const userCheck=(req,res,next)=>{
-    if(req.role=='user'){
-        next();
+const userCheck = (req, res, next) => {
+    if (!req.user || req.user.userRole !== "user") {
+        return res.status(403).json({ message: "Only users can access." });
     }
-    else{
-        res.status(403).json({msg:"You are not allowed"})
-    }
-}
+    next();
+};
 
 export default userCheck;
