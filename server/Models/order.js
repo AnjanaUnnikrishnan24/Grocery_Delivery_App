@@ -32,7 +32,6 @@ const orderSchema = new Schema(
       {
         prodId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
         quantity: { type: Number, required: true },
-        price: { type: Number, required: true }, // Store the price at the time of order
       },
     ],
     totalAmount: { type: Number, required: true },
@@ -41,7 +40,7 @@ const orderSchema = new Schema(
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
-    paymentStatus: {
+    status: {
       type: String,
       enum: ["Pending", "Paid", "Failed"],
       default: "Pending",
@@ -51,11 +50,14 @@ const orderSchema = new Schema(
       enum: ["Cash on Delivery", "Credit Card", "Debit Card", "UPI", "Net Banking"],
       required: true,
     },
-    shippingAddress: {
-      type: Schema.Types.ObjectId,
-      ref: "Address",
-      required: true,
+    address: {
+      address_line: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      pincode: { type: String, required: true },
     },
+    status: { type: String, default: "Pending" },
+    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

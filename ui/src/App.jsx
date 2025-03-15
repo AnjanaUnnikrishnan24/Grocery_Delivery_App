@@ -7,13 +7,12 @@ import AddProduct from "./pages/adminPages/AddProduct";
 import AdminDashboard from "./pages/adminPages/AdminDashboard"; 
 import OrderManage from "./pages/adminPages/OrderManage";
 import ProductsManage from "./pages/adminPages/ProductsManage";
-import About from "./components/About";
 import CheckoutPage from "./pages/CheckoutPage";
 import CartPage from "./pages/CartPage";
 import ContactPage from "./pages/ContactPage";
-import OrderHistoryPage from "./pages/OrderHistoryPage";
 import UpdateProduct from "./pages/adminPages/UpdateProducts";
 import ProductsPage from "./pages/ProductsPage";
+import About from "./pages/About";
 
 
 
@@ -36,7 +35,6 @@ const  App = () => {
         <Route path='/checkout' element={<CheckoutPage/>}/>
         <Route path='/cart' element={<CartPage/>}/>
         <Route path='/contacts' element={<ContactPage/>}/>
-        <Route path='/History' element={<OrderHistoryPage/>}/>
         <Route path='/listing' element={<ProductsPage/>}/>
 
       

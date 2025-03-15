@@ -62,7 +62,7 @@ const ProductsPage = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className=" bg-gray-100 mx-auto px-4 py-6">
       {/* Dynamic Heading */}
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
         {selectedCategory ? `Products in ${selectedCategory}` : "All Products"}

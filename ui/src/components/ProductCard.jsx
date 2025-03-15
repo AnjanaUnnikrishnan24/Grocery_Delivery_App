@@ -56,7 +56,8 @@ const ProductCard = ({ product }) => {
         />
       </Link>
 
-      <h3 className="text-lg font-semibold text-gray-800">{product.productName}</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{product.productName}</h3>
+      <p className="text-md text-gray-700 font-bold">{product.brand}</p>
       <p className="text-sm text-gray-600 font-bold">{product.weight}</p>
 
       <div className="mt-3 flex justify-between items-center">

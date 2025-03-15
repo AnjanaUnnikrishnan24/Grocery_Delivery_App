@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import UserNavBar from "../components/UserNavBar";
 import Footer from "../components/Footer";
 import Banner1 from "../assets/images/Banner1.png";
-import About from "../components/About";
 
 const HomePage = () => {
 
@@ -11,10 +10,8 @@ const HomePage = () => {
       <UserNavBar />
       <div>
         <div className="mt-4">
-          <img src={Banner1} className="w-full" alt="Banner" loading="lazy" />
-        </div>
-        <About />
-        
+          <img src={Banner1} className="w-full h-[85vh]" alt="Banner"  />
+        </div>        
       </div>
       <Footer />
     </>
