@@ -1,7 +1,6 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
 import Order from "../Models/order.js";
-import Cart from "../Models/cart.js";
  
 const orderRoutes = Router();
 

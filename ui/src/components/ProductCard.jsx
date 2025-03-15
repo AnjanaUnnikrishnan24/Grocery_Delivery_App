@@ -27,8 +27,7 @@ const ProductCard = ({ product }) => {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          productId: product._id, 
-          quantity: 1            
+          prodId: product._id, 
         }),
       });
 

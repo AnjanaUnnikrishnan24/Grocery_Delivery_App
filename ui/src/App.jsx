@@ -12,7 +12,6 @@ import CheckoutPage from "./pages/CheckoutPage";
 import CartPage from "./pages/CartPage";
 import ContactPage from "./pages/ContactPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
-
 import UpdateProduct from "./pages/adminPages/UpdateProducts";
 import ProductsPage from "./pages/ProductsPage";
 

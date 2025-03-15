@@ -1,36 +1,42 @@
 import { Router } from "express";
 import authenticate from "../Middleware/auth.js";
-import userCheck from "../Middleware/userCheck.js";
 import Address from "../Models/Address.js";
 
 const userRoutes = Router();
 
-userRoutes.get("/address", authenticate,userCheck, async (req, res) => {
+userRoutes.get("/addresses", authenticate, async (req, res) => {
     try {
         const addresses = await Address.find({ userId: req.user._id });
-        res.status(200).json(addresses);
+        if (!addresses.length) return res.status(404).json({ error: "No addresses found" });
+
+        res.json({ addresses });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching addresses", error });
+        console.error("Error fetching addresses:", error);
+        res.status(500).json({ error: "Failed to fetch addresses" });
     }
 });
  
 userRoutes.post("/addAddress", authenticate, async (req, res) => {
+    const { address_line, city, state, pincode } = req.body;
+    
+    if (!address_line || !city || !state || !pincode) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
     try {
-        const { address_line, city, state, pincode } = req.body;
-        
         const newAddress = new Address({
             address_line,
             city,
             state,
             pincode,
-            userId: req.user._id
+            userId: req.user._id  
         });
 
         await newAddress.save();
-
         res.status(201).json({ message: "Address added successfully", address: newAddress });
     } catch (error) {
-        res.status(500).json({ message: "Error adding address", error });
+        console.error("Error adding address:", error);
+        res.status(500).json({ error: "Failed to add address" });
     }
 });
  

@@ -1,206 +1,117 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CheckoutPage = () => {
-  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [newAddress, setNewAddress] = useState("");
-  const [showNewAddressInput, setShowNewAddressInput] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState("Cash on Delivery");
+  const [newAddress, setNewAddress] = useState({ address_line: "", city: "", state: "", pincode: "" });
+  const navigate = useNavigate();
 
-   useEffect(() => {
-    const fetchCartAndAddresses = async () => {
-      try {
-         const cartResponse = await fetch("/cart/viewCart", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-           
-          },
-        });
-        if (!cartResponse.ok) {
-          throw new Error("Failed to fetch cart items");
-        }
-        const cartData = await cartResponse.json();
-         const items = cartData.cart.map((item) => ({
-          id: item.productId._id,
-          name: item.productId.productName,
-          mrp: item.productId.mrp || 0,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.productId.productImage,
-        }));
-        setCartItems(items);
-
-         const addrResponse = await fetch("/user/addresses", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-           },
-        });
-        if (!addrResponse.ok) {
-          throw new Error("Failed to fetch addresses");
-        }
-        const addrData = await addrResponse.json();
-         setAddresses(addrData.addresses);
-        if (addrData.addresses.length > 0) {
-          setSelectedAddress(addrData.addresses[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchCartAndAddresses();
+  useEffect(() => {
+    fetchCart();
+    fetchAddresses();
   }, []);
 
-   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const shippingFee = subtotal > 1000 ? 0 : 50;
-  const convenienceFee = 20;
-  const total = subtotal + shippingFee + convenienceFee;
+  const fetchCart = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/SignIn");
+    try {
+      const response = await fetch("/api/cart", { headers: { Authorization: `Bearer ${token}` } });
+      const data = await response.json();
+      setCartItems(data.shoppingCart || []);
+    } catch {
+      alert("Error fetching cart");
+    }
+  };
 
-   const handleAddAddress = async () => {
-    if (newAddress.trim()) {
-      try {
+  const fetchAddresses = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("/api/user/addresses", { headers: { Authorization: `Bearer ${token}` } });
+      const data = await response.json();
+      setAddresses(data.addresses || []);
+    } catch {
+      alert("Error fetching addresses");
+    }
+  };
 
-        const response = await fetch("/user/address", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-           },
-          body: JSON.stringify(addressPayload),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to add address");
-        }
-        const data = await response.json();
-         const addedAddress = data.address;
-        const updatedAddresses = [...addresses, addedAddress];
-        setAddresses(updatedAddresses);
-        setSelectedAddress(addedAddress);
-        setNewAddress("");
-        setShowNewAddressInput(false);
-      } catch (error) {
-        console.error("Error adding address:", error);
-      }
+  const handleAddAddress = () => {
+    if (!newAddress.address_line || !newAddress.city || !newAddress.state || !/\d{6}/.test(newAddress.pincode)) {
+      alert("Please enter a valid address");
+      return;
+    }
+    setAddresses([...addresses, { ...newAddress, _id: Date.now().toString() }]);
+    setNewAddress({ address_line: "", city: "", state: "", pincode: "" });
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedAddress) return alert("Please select an address.");
+    const addressDetails = addresses.find((addr) => addr._id === selectedAddress);
+    if (!addressDetails) return alert("Invalid address.");
+    try {
+      await fetch("/api/placeOrder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        body: JSON.stringify({ ...addressDetails, paymentMethod: selectedPayment }),
+      });
+      alert("Order placed successfully!");
+      navigate("/orders");
+    } catch {
+      alert("Error placing order");
     }
   };
 
   return (
-    <main className="container mx-auto p-6 space-y-8 mt-10">
-      <h2 className="text-2xl font-semibold text-center">Checkout</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Cart Details */}
-        <div className="bg-white p-6 rounded-md shadow-lg">
-          <h3 className="text-xl font-semibold mb-4">Cart Details</h3>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-left">Product</th>
-                <th className="px-4 py-2 text-center">Quantity</th>
-                <th className="px-4 py-2 text-right">Price</th>
-                <th className="px-4 py-2 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartItems.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="px-4 py-2 flex items-center space-x-4">
-                    <img
-                      src={item.image}
-                      className="w-12 h-12 object-cover rounded-md"
-                      alt={item.name}
-                    />
-                    <span>{item.name}</span>
-                  </td>
-                  <td className="px-4 py-2 text-center">{item.quantity}</td>
-                  <td className="px-4 py-2 text-right">₹{item.price}</td>
-                  <td className="px-4 py-2 text-right">₹{item.price * item.quantity}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Order Summary */}
-        <div className="bg-white p-6 rounded-md shadow-lg">
-          <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-          <div className="flex justify-between py-2 border-b">
-            <span>Subtotal</span>
-            <span>₹{subtotal}</span>
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+      <div className="bg-white p-4 shadow-md rounded-md mb-4">
+        <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
+        {cartItems.map(({ prodId, quantity }) => (
+          <div key={prodId._id} className="flex justify-between border-b py-2">
+            <span>{prodId.productName} (x{quantity})</span>
+            <span>₹{(prodId.discountedPrice * quantity).toFixed(2)}</span>
           </div>
-          <div className="flex justify-between py-2 border-b">
-            <span>Shipping Fee</span>
-            <span>₹{shippingFee}</span>
-          </div>
-          <div className="flex justify-between py-2 border-b">
-            <span>Convenience Fee</span>
-            <span>₹{convenienceFee}</span>
-          </div>
-          <div className="flex justify-between font-semibold py-2">
-            <span>Total</span>
-            <span>₹{total}</span>
-          </div>
+        ))}
+        <div className="mt-4 text-right">
+          <h3 className="text-xl font-bold">Total: ₹{cartItems.reduce((acc, { prodId, quantity }) => acc + prodId.discountedPrice * quantity, 0).toFixed(2)}</h3>
         </div>
       </div>
 
-      {/* Address Selection */}
-      <div className="bg-white p-6 rounded-md shadow-lg">
-        <h3 className="text-xl font-semibold mb-4">Select Address</h3>
-        <select
-          className="w-full p-2 border rounded mb-4"
-          value={selectedAddress ? selectedAddress.address_line : ""}
-          onChange={(e) => {
-            const selected = addresses.find(
-              (addr) => addr.address_line === e.target.value
-            );
-            setSelectedAddress(selected);
-          }}
-        >
-          {addresses.map((address, index) => (
-            <option key={index} value={address.address_line}>
-              {address.address_line}, {address.city}
-            </option>
-          ))}
+      <div className="bg-white p-4 shadow-md rounded-md mb-4">
+        <h3 className="text-lg font-semibold mb-2">Select Address</h3>
+        {addresses.map((addr) => (
+          <label key={addr._id} className="block mb-2">
+            <input type="radio" name="address" value={addr._id} onChange={(e) => setSelectedAddress(e.target.value)} className="mr-2" />
+            {addr.address_line}, {addr.city}, {addr.state} - {addr.pincode}
+          </label>
+        ))}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold">Add New Address</h3>
+          <input type="text" placeholder="Address Line" className="border p-2 w-full mb-2" value={newAddress.address_line} onChange={(e) => setNewAddress({ ...newAddress, address_line: e.target.value })} />
+          <input type="text" placeholder="City" className="border p-2 w-full mb-2" value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} />
+          <input type="text" placeholder="State" className="border p-2 w-full mb-2" value={newAddress.state} onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} />
+          <input type="text" placeholder="Pincode" className="border p-2 w-full mb-2" value={newAddress.pincode} onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })} />
+          <button onClick={handleAddAddress} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Add Address</button>
+        </div>
+      </div>
+
+      <div className="bg-white p-4 shadow-md rounded-md mb-4">
+        <h3 className="text-lg font-semibold mb-2">Select Payment Method</h3>
+        <select value={selectedPayment} onChange={(e) => setSelectedPayment(e.target.value)} className="w-full p-2 border rounded-md">
+          <option value="Cash on Delivery">Cash on Delivery</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="Debit Card">Debit Card</option>
+          <option value="UPI">UPI</option>
+          <option value="Net Banking">Net Banking</option>
         </select>
-
-        {showNewAddressInput ? (
-          <div className="mt-4">
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              placeholder="Enter new address"
-              value={newAddress}
-              onChange={(e) => setNewAddress(e.target.value)}
-            />
-            <button
-              className="mt-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-              onClick={handleAddAddress}
-            >
-              Add Address
-            </button>
-          </div>
-        ) : (
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            onClick={() => setShowNewAddressInput(true)}
-          >
-            Add New Address
-          </button>
-        )}
       </div>
 
-      {/* Proceed to Payment Button */}
-      <div className="flex justify-end">
-        <button
-          onClick={() => navigate("/payment")}
-          className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-        >
-          Proceed to Payment
-        </button>
-      </div>
-    </main>
+      <button onClick={handlePlaceOrder} className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded w-full">
+        Place Order
+      </button>
+    </div>
   );
 };
 

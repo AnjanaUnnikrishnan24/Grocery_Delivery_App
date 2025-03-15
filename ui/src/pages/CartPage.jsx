@@ -1,196 +1,95 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link,useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await fetch("/api/viewCart", {
-          method: "GET",
-          credentials: "include", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        // Debugging: Log raw response
-        const text = await response.text();
-        console.log("Raw response:", text);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch cart (HTTP ${response.status})`);
-        }
-
-        // Parse JSON
-        const data = JSON.parse(text);
-        const items = data.cart.map((item) => ({
-          id: item.prodId._id,
-          name: item.prodId.productName,
-          brand: item.prodId.brand,
-          price: item.prodId.discountedPrice,
-          quantity: item.quantity,
-          image: item.prodId.productImage,
-        }));
-
-        setCartItems(items);
-      } catch (err) {
-        console.error("Error fetching cart items:", err);
-        setError("Failed to fetch cart. Please try again.");
-      }
-    };
-
     fetchCart();
   }, []);
 
-  const updateQuantity = async (id, newQuantity) => {
-    if (newQuantity < 1) return;
+  const fetchCart = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setErrorMsg("Please log in to view your cart.");
+      setTimeout(() => navigate("/SignIn"), 2000);
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/update/${id}`, {
-        method: "PUT",
+      const response = await fetch("/api/cart", {  // FIXED: Corrected endpoint
+        method: "GET",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantity: newQuantity }),
+        headers: { "Authorization": `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to update cart item");
-      }
-
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
+      if (!response.ok) throw new Error("Failed to fetch cart");
+      const data = await response.json();
+      setCartItems(data.shoppingCart || []);
     } catch (error) {
-      console.error("Error updating item quantity:", error);
+      setErrorMsg("Error fetching cart data");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const removeItem = async (id) => {
+  const handleRemove = async (prodId) => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`/api/remove/${id}`, {
+      const response = await fetch(`/api/remove/${prodId}`, {  // FIXED: Corrected endpoint
         method: "DELETE",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Authorization": `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to remove cart item");
-      }
-
-      setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      if (!response.ok) throw new Error("Failed to remove item");
+      setCartItems(cartItems.filter(item => item.prodId._id !== prodId));
     } catch (error) {
-      console.error("Error removing item from cart:", error);
+      setErrorMsg("Error removing item from cart");
     }
   };
 
-  const clearCart = async () => {
-    try {
-      const response = await fetch("/api/clearCart", {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  const totalAmount = cartItems.reduce((acc, { prodId, quantity }) => acc + prodId.discountedPrice * quantity, 0);  // FIXED: Using discountedPrice
 
-      if (!response.ok) {
-        throw new Error("Failed to clear cart");
-      }
-
-      setCartItems([]);
-    } catch (error) {
-      console.error("Error clearing cart:", error);
-    }
-  };
+  if (loading) return <p className="text-center text-gray-600">Loading cart...</p>;
+  if (errorMsg) return <p className="text-center text-red-500">{errorMsg}</p>;
+  if (cartItems.length === 0) return <p className="text-center text-gray-500">Your cart is empty.</p>;
 
   return (
-    <main className="container mx-auto p-6 space-y-8 mt-10">
-      <div className="bg-white w-[90%] mt-16 p-6 rounded-md mx-auto shadow-lg">
-        <h2 className="text-2xl font-semibold text-center">Cart</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        {cartItems.length > 0 ? (
-          <>
-            <table className="w-full border-collapse border border-gray-400 mt-4">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-4 py-2 text-left">Product</th>
-                  <th className="px-4 py-2 text-left">Brand</th>
-                  <th className="px-4 py-2 text-left">Price</th>
-                  <th className="px-4 py-2 text-left">Quantity</th>
-                  <th className="px-4 py-2 text-left">Total</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItems.map((item) => (
-                  <tr key={item.id} className="border-b">
-                    <td className="px-4 py-2 flex items-center space-x-4">
-                      <img
-                        src={item.image}
-                        className="w-12 h-12 object-cover rounded-md"
-                        alt={item.name}
-                      />
-                      <span>{item.name}</span>
-                    </td>
-                    <td className="px-4 py-2">{item.brand}</td>
-                    <td className="px-4 py-2">₹{item.price}</td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-2 bg-gray-200 rounded"
-                      >
-                        -
-                      </button>
-                      <span className="px-2">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-2 bg-gray-200 rounded"
-                      >
-                        +
-                      </button>
-                    </td>
-                    <td className="px-4 py-2">₹{item.price * item.quantity}</td>
-                    <td className="px-4 py-2">
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-end mt-6 space-x-4">
-              <button
-                onClick={clearCart}
-                className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
-              >
-                Clear Cart
-              </button>
-              <button
-                onClick={() => navigate("/checkout")}
-                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-              >
-                Proceed to Checkout
-              </button>
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
+      {cartItems.map(({ prodId, quantity }) => (
+        <div key={prodId._id} className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center">
+            <img
+              src={prodId.productImage || "https://via.placeholder.com/150"}  // FIXED: Use productImage
+              alt={prodId.productName}
+              className="w-20 h-20 object-cover rounded-md mr-4"
+            />
+            <div>
+              <h3 className="text-lg font-semibold">Product Name :{prodId.productName}</h3>  
+              <p className="text-gray-600">Price: ₹{prodId.discountedPrice}</p> 
+              <p className="text-gray-600">Quantity: {quantity}</p>
             </div>
-          </>
-        ) : (
-          <p className="text-center text-gray-500 mt-6">Your cart is empty.</p>
-        )}
+          </div>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            onClick={() => handleRemove(prodId._id)}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+      <div className="mt-4 text-right">
+        <h3 className="text-xl font-bold">Total: ₹{totalAmount.toFixed(2)}</h3>
       </div>
-    </main>
+      <Link to="/checkout">
+        <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded w-full">
+          Proceed to Checkout
+        </button>
+      </Link>
+    </div>
   );
 };
 
