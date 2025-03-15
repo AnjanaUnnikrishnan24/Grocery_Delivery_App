@@ -3,6 +3,7 @@ import authenticate from "../Middleware/auth.js";
 import Product from "../Models/product.js";
 import User from "../Models/user.js";
 import Order from "../Models/order.js";
+import Address from "../Models/Address.js";
 
 const cartRoutes = Router();
 
@@ -107,15 +108,61 @@ cartRoutes.delete("/remove/:prodId", authenticate, async (req, res) => {
     }
 });
 
-cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
-    const { address_line, city, state, pincode } = req.body;
+// cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
+//     const { address_line, city, state, pincode } = req.body;
 
-    // Validate address fields
-    if (!address_line || !city || !state || !pincode) {
-        return res.status(400).json({ error: "All address fields are required" });
-    }
-    if (!/^\d{6}$/.test(pincode)) {
-        return res.status(400).json({ error: "Invalid pincode format. Must be 6 digits." });
+//     // Validate address fields
+//     if (!address_line || !city || !state || !pincode) {
+//         return res.status(400).json({ error: "All address fields are required" });
+//     }
+//     if (!/^\d{6}$/.test(pincode)) {
+//         return res.status(400).json({ error: "Invalid pincode format. Must be 6 digits." });
+//     }
+
+//     try {
+//         const user = await User.findById(req.user._id).populate("shoppingCart.prodId");
+
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+
+//         if (!user.shoppingCart.length) {
+//             return res.status(400).json({ error: "Cart is empty" });
+//         }
+
+//         // Create order with provided address
+//         const newOrder = new Order({
+//             userId: user._id,
+//             items: user.shoppingCart.map(({ prodId, quantity }) => ({
+//                 productId: prodId._id,
+//                 productName: prodId.productName,
+//                 quantity,
+//                 price: prodId.discountedPrice,
+//             })),
+//             totalAmount: user.shoppingCart.reduce((acc, { prodId, quantity }) => acc + prodId.discountedPrice * quantity, 0),
+//             address: { address_line, city, state, pincode },
+//             status: "Pending", // Default order status
+//         });
+
+//         await newOrder.save();
+
+//         // Clear the cart after successful order
+//         user.shoppingCart = [];
+//         await user.save();
+
+//         res.json({ message: "Order placed successfully!", orderId: newOrder._id });
+//     } catch (error) {
+//         console.error("Error placing order:", error);
+//         res.status(500).json({ error: "Failed to place order" });
+//     }
+// });
+
+cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
+    const { addressId, paymentMethod } = req.body;
+
+    // Validate required fields
+    if (!addressId || !paymentMethod) {
+        return res.status(400).json({ error: "Address ID and payment method are required" });
     }
 
     try {
@@ -129,7 +176,13 @@ cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
             return res.status(400).json({ error: "Cart is empty" });
         }
 
-        // Create order with provided address
+        // Fetch address details
+        const address = await Address.findById(addressId);
+        if (!address) {
+            return res.status(404).json({ error: "Address not found" });
+        }
+
+        // Create order with provided address and payment method
         const newOrder = new Order({
             userId: user._id,
             items: user.shoppingCart.map(({ prodId, quantity }) => ({
@@ -139,7 +192,13 @@ cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
                 price: prodId.discountedPrice,
             })),
             totalAmount: user.shoppingCart.reduce((acc, { prodId, quantity }) => acc + prodId.discountedPrice * quantity, 0),
-            address: { address_line, city, state, pincode },
+            address: {
+                address_line: address.address_line,
+                city: address.city,
+                state: address.state,
+                pincode: address.pincode,
+            },
+            paymentMethod,
             status: "Pending", // Default order status
         });
 
@@ -155,6 +214,5 @@ cartRoutes.post("/placeOrder", authenticate, async (req, res) => {
         res.status(500).json({ error: "Failed to place order" });
     }
 });
-
 export { cartRoutes };
 

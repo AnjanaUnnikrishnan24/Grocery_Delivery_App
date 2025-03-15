@@ -13,6 +13,7 @@ import ContactPage from "./pages/ContactPage";
 import UpdateProduct from "./pages/adminPages/UpdateProducts";
 import ProductsPage from "./pages/ProductsPage";
 import About from "./pages/About";
+import UserProfilePage from "./pages/UserProfilePage";
 
 
 
@@ -36,6 +37,7 @@ const  App = () => {
         <Route path='/cart' element={<CartPage/>}/>
         <Route path='/contacts' element={<ContactPage/>}/>
         <Route path='/listing' element={<ProductsPage/>}/>
+        <Route path='/users/:_id' element={<UserProfilePage/>}/>
 
       
       </Routes>

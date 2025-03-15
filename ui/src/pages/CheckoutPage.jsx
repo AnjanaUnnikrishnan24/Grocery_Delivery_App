@@ -32,7 +32,7 @@ const CheckoutPage = () => {
   const fetchAddresses = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("/api/user/addresses", { headers: { Authorization: `Bearer ${token}` } });
+      const response = await fetch("/api/addresses", { headers: { Authorization: `Bearer ${token}` } });
       if (!response.ok) throw new Error("Failed to fetch addresses");
       const data = await response.json();
       setAddresses(data.addresses || []);
@@ -49,7 +49,7 @@ const CheckoutPage = () => {
 
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("/api/user/addresses", {
+      const response = await fetch("/api/addAddresses", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(newAddress),

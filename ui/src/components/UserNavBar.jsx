@@ -29,7 +29,7 @@ const UserNavBar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/cart" className="hover:text-green-600 transition">Cart</Link>
-              <Link to="/orders" className="hover:text-green-600 transition">Order History</Link>
+              <Link to="/users/:_id" className="hover:text-green-600 transition">Profile</Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"

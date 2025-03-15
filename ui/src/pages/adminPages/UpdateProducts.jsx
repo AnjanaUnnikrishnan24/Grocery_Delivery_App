@@ -168,19 +168,6 @@ const UpdateProduct = () => {
           </div>
 
         
-
-        
-
-        
-
-        
-
-
-        
-
-        
-
-        
         </div>
 
         <button type="submit" disabled={loading}>{loading ? "Updating..." : "Update Product"}</button>
