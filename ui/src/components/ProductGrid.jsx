@@ -7,7 +7,7 @@ const ProductGrid = ({ products }) => {
   const handleAddToCart = async (product) => {
     setLoading(true);
     try {
-      const response = await fetch("/api/cart/add", {
+      const response = await fetch("/api/addToCart", {
         method: "POST",
         credentials:'include',
         headers: {

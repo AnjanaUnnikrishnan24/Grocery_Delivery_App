@@ -29,12 +29,8 @@ const  App = () => {
         <Route path='/addproduct' element={<AddProduct/>}/>
         <Route path='/dashboard' element={<AdminDashboard/>}/>
         <Route path='/orderManage' element={<OrderManage/>}/>
-        <Route path='/productManage' element={<ProductsManage/>}/>
-        {/* <Route path='/product/:prodId' element={<Product} */}
-        
-        {/* <Route path="/productupdate/:prodid" element={<UpdateProducts/>}/> */}
-         {/* <Route path='/productupdate/:prodId' element={<UpdateProduct/>}/> */}
-         <Route path="/productupdate/:prodId" element={<UpdateProduct />} />
+        <Route path='/productManage' element={<ProductsManage/>}/>        
+        <Route path="/productupdate/:prodId" element={<UpdateProduct />} />
 
         {/* customer pages */}
         <Route path='/about' element={<About/>}/>
@@ -42,8 +38,6 @@ const  App = () => {
         <Route path='/cart' element={<CartPage/>}/>
         <Route path='/contacts' element={<ContactPage/>}/>
         <Route path='/History' element={<OrderHistoryPage/>}/>
-        {/* <Route path="/product/:prodId" element={<ProductDetailsPage />} /> */}
-        {/* <Route path='/listing' element={<ProductListingPage/>}/> */}
         <Route path='/listing' element={<ProductsPage/>}/>
 
       
