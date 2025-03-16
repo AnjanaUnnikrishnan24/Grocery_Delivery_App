@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import AdminNavBar from "../../components/AdminNavBar";
 
 const ProductsManage = () => {
   const [products, setProducts] = useState([]);
@@ -45,7 +46,7 @@ const ProductsManage = () => {
     } catch (err) {
       alert("Error deleting product: " + err.message);
     } finally {
-      setDeletingId(null); // Reset deleting state
+      setDeletingId(null); 
     }
   };
 
@@ -53,7 +54,10 @@ const ProductsManage = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
+    <>
+    <AdminNavBar/>
     <div className="p-6 bg-gray-100 min-h-screen">
+      
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-semibold mb-6">Manage Products</h1>
 
@@ -115,6 +119,9 @@ const ProductsManage = () => {
         </div>
       </div>
     </div>
+    </>
+    
+    
   );
 };
 

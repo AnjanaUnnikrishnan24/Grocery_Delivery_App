@@ -19,12 +19,10 @@ userRoutes.post("/addAddress", authenticate, async (req, res) => {
     try {
         const { address_line, city, state, pincode } = req.body;
     
-        // Validate input
         if (!address_line || !city || !state || !pincode) {
           return res.status(400).json({ message: "All fields are required" });
         }
     
-        // Create new address
         const newAddress = new Address({
           address_line,
           city,
@@ -45,15 +43,13 @@ userRoutes.post("/addAddress", authenticate, async (req, res) => {
             const { _id } = req.params;
             console.log("User _id:", _id);
     
-            // Validate _id
             if (!mongoose.Types.ObjectId.isValid(_id)) {
                 return res.status(400).json({ message: "Invalid user _id" });
             }
     
-            // Find the user by _id and populate addressDetails
             const user = await User.findById(_id)
                 .select('fullName email phone')
-                .populate('addressDetails'); // Populate the addressDetails field
+                .populate('addressDetails'); 
     
             if (!user) {
                 return res.status(404).json({ message: "User not found" });

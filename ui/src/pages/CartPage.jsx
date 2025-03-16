@@ -50,9 +50,8 @@ const CartPage = () => {
     }
   };
 
-  // Calculate total amount safely
   const totalAmount = cartItems.reduce((acc, { prodId, quantity }) => {
-    if (!prodId || !prodId.discountedPrice) return acc; // Skip invalid items
+    if (!prodId || !prodId.discountedPrice) return acc; 
     return acc + prodId.discountedPrice * quantity;
   }, 0);
 
@@ -64,7 +63,7 @@ const CartPage = () => {
     <div className="max-w-4xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Shopping Cart</h2>
       {cartItems.map(({ prodId, quantity }) => {
-        if (!prodId) return null; // Skip rendering invalid items
+        if (!prodId) return null; 
         return (
           <div key={prodId._id} className="flex items-center justify-between p-4 border-b">
             <div className="flex items-center">

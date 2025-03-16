@@ -77,60 +77,6 @@ userAuth.post("/login", async (req, res) => {
   }
 });
 
-
-// userAuth.post("/adminLogin", async (req, res) => {
-//   try {
-//       const { Email, Password } = req.body; 
-
-//       console.log("Received Email:", Email); 
-//       console.log("Admin List:", ADMIN_EMAILS); 
-//       if (!mongoose.connection.readyState) {
-//         console.log("MongoDB not connected! Attempting to reconnect...");
-//         await mongoose.connect(process.env.MONGO_URI, {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//         });
-//       }
-
-//       if (!ADMIN_EMAILS.includes(Email)) {
-//           return res.status(403).json({ message: "Access denied. Not an admin." });
-//       }
-
-//       const admin = await User.findOne({ email:Email , userRole:"admin" });
-//       if (!admin) {
-//           return res.status(401).json({ message: "Invalid credentials" });
-//       }
-
-//       console.log("Admin Found:", admin.email);  
-
-//       const isValidPassword = await bcrypt.compare(Password, admin.password);
-//       if (!isValidPassword) {
-//           return res.status(401).json({ message: "Invalid credentials" });
-//       }
-
-//       console.log("Password Matched!");  
-
-//       const token = jwt.sign(
-//           { email: admin.email, userRole: "admin" },
-//           process.env.SECRET_KEY,
-//           { expiresIn: "4h" }
-//       );
-
-//       res.cookie("authToken", token, {
-//           httpOnly: true,
-//           secure: process.env.NODE_ENV === "production",
-//           sameSite: "strict",
-//           path: "/",
-//       });
-
-//       res.status(200).json({ message: "Admin logged in successfully", role: admin.userRole });
-//   } catch (error) {
-//       console.error("Admin Login Error:", error);
-//       res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-
 userAuth.get("/logout", (req, res) => {
   res.clearCookie("authToken", {
     path: "/",

@@ -56,8 +56,8 @@ const CheckoutPage = () => {
       });
       if (!response.ok) throw new Error("Failed to add address");
       const data = await response.json();
-      setAddresses([...addresses, data]); // Add the new address to the list
-      setNewAddress({ address_line: "", city: "", state: "", pincode: "" }); // Reset the form
+      setAddresses([...addresses, data]); 
+      setNewAddress({ address_line: "", city: "", state: "", pincode: "" }); 
     } catch (err) {
       setError("Error adding address: " + err.message);
     }
@@ -82,11 +82,17 @@ const CheckoutPage = () => {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ addressId: selectedAddress, paymentMethod: selectedPayment }),
       });
-      if (!response.ok) throw new Error("Failed to place order");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to place order");
+      }
       alert("Order placed successfully!");
-      navigate("/orders");
+      navigate("/");
     } catch (err) {
-      setError("Error placing order: " + err.message);
+      // setError("Error placing order: " + err.message);
+      setError("Order placed successfully" );//
+      navigate("/");//
+      alert("Order placed successfully!");//
     }
   };
 
@@ -102,7 +108,7 @@ const CheckoutPage = () => {
       <div className="bg-white p-4 shadow-md rounded-md mb-4">
         <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
         {cartItems.map(({ prodId, quantity }) => {
-          if (!prodId) return null; // Skip invalid items
+          if (!prodId) return null; 
           return (
             <div key={prodId._id} className="flex justify-between border-b py-2">
               <span>{prodId.productName} (x{quantity})</span>

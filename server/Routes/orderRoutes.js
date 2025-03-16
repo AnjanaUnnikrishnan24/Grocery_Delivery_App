@@ -4,7 +4,6 @@ import Order from "../Models/order.js";
  
 const orderRoutes = Router();
 
-// Checkout Route
 orderRoutes.post("/checkout", authenticate, async (req, res) => {
     try {
         const userCart = await Cart.find({ userId: req.user.id }).populate("productId");

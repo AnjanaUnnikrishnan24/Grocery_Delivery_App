@@ -1,8 +1,10 @@
 import React from 'react';
+import UserNavBar from '../components/UserNavBar';
 
 const About = () => {
   return (
     <>  
+    <UserNavBar/>
     <div className="bg-white font-sans flex items-center justify-center mt-4 px-4">
       <div className="max-w-8xl bg-gray-200 shadow-lg rounded-lg p-10 md:p-14">
         <h1 className="text-4xl font-bold text-center text-green-700 mt=32 mb-6">About Us</h1>

@@ -10,46 +10,6 @@ const convertToBase64 = (buffer) => {
     return buffer.toString("base64");
 };
 
-// productRoutes.post("/addProducts", authenticate, adminCheck, upload.single("productImage"), async (req, res) => {
-//   try {
-//     const { ProductName, ProdId, CategoryName, Brand, DietaryType, Mrp, DiscountPercent, Weight, StockQty } = req.body;
-
-//     const existingProduct = await Product.findOne({ prodId : ProdId });
-//     if (existingProduct) {
-//       return res.status(400).json({ message: "Product already exists!" });
-//     }
-      
-//     let imageBase64 = null;
-//     if (req.file) {
-//       imageBase64 = convertToBase64(req.file.buffer);
-//     }
-      
-//     const discountedPrice = Mrp - (Mrp * DiscountPercent) / 100;
-      
-//     const newProduct = new Product({
-//       productName :ProductName,
-//       prodId :ProdId, 
-//       categoryName:CategoryName,
-//       brand : Brand,
-//       dietaryType:DietaryType,
-//       mrp:Mrp,
-//       discountPercent:DiscountPercent,
-//       discountedPrice,
-//       weight:Weight,
-//       stockQty:StockQty,
-//       productImage: imageBase64,
-//     });
-      
-//     await newProduct.save();
-//     res.status(201).json({ message: "Product added successfully!" });
-      
-//   } catch (error) {
-//     console.error("Error adding product:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }}
-// );
-
-
 productRoutes.post("/addProducts", authenticate, adminCheck, upload.single("productImage"), async (req, res) => {
   try {
     const { productName, prodId, categoryName, brand, dietaryType, mrp, discountPercent, weight, stockQty } = req.body;
@@ -147,8 +107,6 @@ productRoutes.put( "/productupdate/:prodId", authenticate, adminCheck, upload.si
 );
 
 
-
-// Delete Product
 productRoutes.delete('/deleteProduct/:prodId', authenticate, adminCheck, async (req, res) => {
   try {
     const {prodId } = req.params;
@@ -165,7 +123,6 @@ productRoutes.delete('/deleteProduct/:prodId', authenticate, adminCheck, async (
   }
 });
 
-// Get All Products
 productRoutes.get("/allproducts", async (req, res) => {
   try {
     const products = await Product.find();

@@ -5,7 +5,6 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import AddProduct from "./pages/adminPages/AddProduct"; 
 import AdminDashboard from "./pages/adminPages/AdminDashboard"; 
-import OrderManage from "./pages/adminPages/OrderManage";
 import ProductsManage from "./pages/adminPages/ProductsManage";
 import CheckoutPage from "./pages/CheckoutPage";
 import CartPage from "./pages/CartPage";
@@ -27,7 +26,6 @@ const  App = () => {
         {/* admin pages */}
         <Route path='/addproduct' element={<AddProduct/>}/>
         <Route path='/dashboard' element={<AdminDashboard/>}/>
-        <Route path='/orderManage' element={<OrderManage/>}/>
         <Route path='/productManage' element={<ProductsManage/>}/>        
         <Route path="/productupdate/:prodId" element={<UpdateProduct />} />
 

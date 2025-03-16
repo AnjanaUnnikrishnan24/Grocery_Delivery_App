@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import AdminNavBar from "../../components/AdminNavBar";
 
 const UpdateProduct = () => {
   const { prodId } = useParams();
@@ -22,7 +23,6 @@ const UpdateProduct = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -55,12 +55,10 @@ const UpdateProduct = () => {
     fetchProduct();
   }, [prodId]);
 
-  // Handle input changes
   const handleChange = (e) => {
     setProductData({ ...productData, [e.target.name]: e.target.value });
   };
 
-  // Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -74,7 +72,6 @@ const UpdateProduct = () => {
     };
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -105,7 +102,7 @@ const UpdateProduct = () => {
       }
 
       alert("Product updated successfully!");
-      navigate("/inventory");
+      navigate("/productManage");
     } catch (err) {
       console.error("Error updating product:", err);
       setError("Failed to update product. Please try again.");
@@ -116,6 +113,7 @@ const UpdateProduct = () => {
 
   return (
     <div className="bg-gray-200 font-sans">
+      <AdminNavBar/>
       <main  className="ml-72 p-8 bg-white shadow-lg rounded-lg w-[75%] mt-6">
       <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Update Product</h2>
       {error && <p className="error">{error}</p>}
@@ -170,7 +168,7 @@ const UpdateProduct = () => {
         
         </div>
 
-        <button type="submit" disabled={loading}>{loading ? "Updating..." : "Update Product"}</button>
+        <button type="submit" className="bg-green-500 text-white py-3 px-6 rounded-lg font-medium" disabled={loading}>{loading ? "Updating..." : "Update Product"}</button>
       </form>
       </main>
     </div>

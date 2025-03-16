@@ -2,62 +2,59 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const UserProfilePage = () => {
-  const { _id } = useParams(); // Get _id from the URL
+  const { _id } = useParams(); 
   const [user, setUser] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState({ address_line: "", city: "", state: "", pincode: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Debugging: Log _id
   console.log("User _id:", _id);
 
-  // Fetch user details and addresses
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
         setError("Please log in to view this page.");
-        setLoading(false); // Stop loading
+        setLoading(false); 
         return;
       }
 
       if (!_id) {
         setError("User _id is missing.");
-        setLoading(false); // Stop loading
+        setLoading(false); 
         return;
       }
 
       try {
-        console.log("Fetching user details..."); // Debugging line
+        console.log("Fetching user details..."); 
         const userResponse = await fetch(`/api/users/${_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!userResponse.ok) throw new Error("Failed to fetch user details");
         const userData = await userResponse.json();
-        console.log("User details:", userData); // Debugging line
+        console.log("User details:", userData); 
         setUser(userData);
 
-        console.log("Fetching addresses..."); // Debugging line
+        console.log("Fetching addresses..."); 
         const addressesResponse = await fetch("/api/addresses", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!addressesResponse.ok) throw new Error("Failed to fetch addresses");
         const addressesData = await addressesResponse.json();
-        console.log("Addresses:", addressesData); // Debugging line
+        console.log("Addresses:", addressesData); 
         setAddresses(addressesData.addresses || []);
       } catch (err) {
-        console.error("Error:", err.message); // Debugging line
+        console.error("Error:", err.message); 
         setError(err.message);
       } finally {
-        setLoading(false); // Ensure loading is set to false
+        setLoading(false); 
       }
     };
 
     fetchData();
   }, [_id]);
 
-  // Handle adding a new address
   const handleAddAddress = async () => {
     if (!newAddress.address_line || !newAddress.city || !newAddress.state || !/\d{6}/.test(newAddress.pincode)) {
       setError("Please enter a valid address.");
@@ -77,10 +74,9 @@ const UserProfilePage = () => {
       if (!response.ok) throw new Error("Failed to add address");
       const data = await response.json();
 
-      // Update the addresses list
       setAddresses([...addresses, data]);
-      setNewAddress({ address_line: "", city: "", state: "", pincode: "" }); // Reset the form
-      setError(""); // Clear any previous errors
+      setNewAddress({ address_line: "", city: "", state: "", pincode: "" });
+      setError(""); 
     } catch (err) {
       setError("Error adding address: " + err.message);
     }

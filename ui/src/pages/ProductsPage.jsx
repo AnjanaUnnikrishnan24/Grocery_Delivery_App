@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductGrid from "../components/ProductGrid";
+import UserNavBar from "../components/UserNavBar"
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -62,6 +63,8 @@ const ProductsPage = () => {
   );
 
   return (
+    <>
+    <UserNavBar/>
     <div className=" bg-gray-100 mx-auto px-4 py-6">
       {/* Dynamic Heading */}
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
@@ -127,6 +130,7 @@ const ProductsPage = () => {
         <ProductGrid products={filteredProducts} />
       )}
     </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AdminNavBar from "../../components/AdminNavBar"
 
 const AddProduct = () => {
   const [productName, setProductName] = useState("");
@@ -15,7 +16,7 @@ const AddProduct = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProductImage(file); // Store the file, not Base64
+      setProductImage(file); 
     }
   }
 
@@ -76,6 +77,7 @@ const AddProduct = () => {
 
   return (
     <div className="bg-gray-200 font-sans">
+      <AdminNavBar/>
       <main className="ml-72 p-8 bg-white shadow-lg rounded-lg w-[75%] mt-6">
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
           Add a New Product
